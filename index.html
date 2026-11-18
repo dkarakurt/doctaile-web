@@ -1,0 +1,1027 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>doctaile</title>
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<meta name="theme-color" content="#10151c">
+<meta property="og:title" content="doctaile · Barında ne varsa, ondan bir kokteyl">
+<meta property="og:description" content="Elindeki şişelerle gerçekten yapılabilecek kokteyli bulan Android uygulaması. 156 malzeme, 217 tarif, internetsiz.">
+<meta property="og:type" content="website">
+<meta name="description" content="doctaile: elindeki şişelerle gerçekten yapılabilecek kokteyli bulan Android uygulaması. 156 malzeme, 217 tarif, internetsiz.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  /* Barın arka odası: mürekkep laciverti zemin, pirinç vurgu, şarap kırmızısı sıvı. Sağda sayfanın kendisi bir ölçü kabı: kaydırdıkça 0'dan 90 ml'ye dolar. */
+  --ink:#10151c;
+  --panel:#18202a;
+  --panel-2:#1f2935;
+  --line:#2b3644;
+  --brass:#d8a95b;
+  --brass-soft:#d8a95b1f;
+  --wine:#8e3b1c;
+  --cream:#ece5d8;
+  --muted:#96a0ab;
+  --display:"DM Serif Display", Georgia, "Times New Roman", serif;
+  --body:"Manrope", "Segoe UI", system-ui, sans-serif;
+  --mono:"DM Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+  color-scheme: dark;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+body{margin:0;background:var(--ink);color:var(--cream);font-family:var(--body);font-size:17px;line-height:1.6;overflow-x:hidden}
+a{color:var(--brass)}
+:focus-visible{outline:2px solid var(--brass);outline-offset:3px;border-radius:4px}
+h1,h2,h3{font-family:var(--display);font-weight:400;line-height:1.05;margin:0;text-wrap:balance}
+p{margin:0}
+.mono{font-family:var(--mono)}
+.hidden{display:none !important}
+.btn{display:inline-flex;align-items:center;gap:10px;border:1px solid var(--line);background:var(--panel-2);color:var(--cream);padding:12px 20px;border-radius:999px;font:600 15px/1 var(--body);cursor:pointer;text-decoration:none;transition:border-color .15s,transform .15s}
+.btn:hover{border-color:var(--brass)}
+.btn:active{transform:translateY(1px)}
+.btn.primary{background:var(--brass);border-color:var(--brass);color:#1b140a;font-size:16px;padding:15px 26px}
+.btn.primary:hover{filter:brightness(1.07)}
+.btn small{font:500 12px var(--mono);opacity:.75}
+
+/* ---------- Üst çubuk ---------- */
+.top{position:sticky;top:0;z-index:30;display:flex;align-items:center;justify-content:space-between;gap:16px;padding:14px clamp(16px,4vw,48px);background:linear-gradient(var(--ink) 60%,transparent)}
+.logo{font-family:var(--display);font-size:28px;color:var(--cream);text-decoration:none;letter-spacing:.3px}
+.logo em{color:var(--brass)}
+.top nav{display:flex;gap:22px;align-items:center}
+.top nav a{color:var(--muted);text-decoration:none;font-size:14px;font-weight:600}
+.top nav a:hover{color:var(--cream)}
+.top nav .btn{padding:9px 16px;font-size:14px}
+@media (max-width:760px){.top nav a:not(.btn){display:none}}
+
+/* ---------- Ölçü kabı (sayfa ilerlemesi) ---------- */
+.jigger{position:fixed;right:18px;top:50%;transform:translateY(-50%);z-index:20;width:54px;pointer-events:none}
+.jigger svg{width:100%;height:auto;display:block}
+.jigger .ml{font:500 12px var(--mono);color:var(--brass);text-align:center;margin-top:6px;font-variant-numeric:tabular-nums}
+@media (max-width:900px){.jigger{display:none}}
+.bar{position:fixed;left:0;top:0;height:3px;background:var(--brass);z-index:40;width:0}
+@media (min-width:901px){.bar{display:none}}
+
+main{padding:0 clamp(16px,4vw,48px)}
+section{max-width:1180px;margin:0 auto;padding:clamp(56px,9vw,120px) 0;position:relative}
+.eyebrow{font:500 13px var(--mono);color:var(--brass);letter-spacing:.5px;display:flex;align-items:center;gap:12px;margin-bottom:18px}
+.eyebrow::before{content:"";width:28px;height:1px;background:var(--brass)}
+.lede{font-size:clamp(17px,1.6vw,20px);color:var(--muted);max-width:58ch}
+
+/* ---------- Hero ---------- */
+.hero{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,.85fr);gap:clamp(24px,4vw,64px);align-items:center;padding-top:clamp(24px,5vw,60px)}
+@media (max-width:860px){.hero{grid-template-columns:1fr}}
+.hero h1{font-size:clamp(46px,7.4vw,104px);letter-spacing:-1px}
+.hero h1 em{color:var(--brass);display:block}
+.hero .lede{margin-top:24px}
+.hero .ctas{display:flex;gap:12px;flex-wrap:wrap;margin-top:32px}
+.facts{display:flex;gap:clamp(18px,3vw,40px);margin-top:40px;flex-wrap:wrap}
+.facts div{display:grid}
+.facts b{font:500 clamp(26px,3vw,36px) var(--mono);color:var(--cream);font-variant-numeric:tabular-nums}
+.facts span{font-size:13px;color:var(--muted)}
+.stagebox{position:relative;display:grid;justify-items:center;gap:14px}
+.heroglass{width:min(100%,380px);aspect-ratio:200/260;transform-origin:50% 92%;filter:drop-shadow(0 30px 40px rgba(0,0,0,.45))}
+.heroglass svg{width:100%;height:100%;display:block}
+.halo{position:absolute;inset:6% 4% 20%;background:radial-gradient(circle at 50% 55%,#2b3a4f 0%,transparent 65%);z-index:-1}
+.nowserving{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:12px 16px;display:grid;grid-template-columns:auto 1fr auto;gap:4px 14px;align-items:center;width:min(100%,380px)}
+.nowserving .k{font:500 11px var(--mono);color:var(--muted);grid-column:1/-1;letter-spacing:.4px}
+.nowserving .n{font-family:var(--display);font-size:24px;line-height:1.1}
+.nowserving .t{font-size:13px;color:var(--muted);grid-column:1/3}
+.nowserving .pct{font:500 22px var(--mono);color:var(--brass);grid-row:2/4;grid-column:3;font-variant-numeric:tabular-nums}
+.shakehint{font:500 12px var(--mono);color:var(--muted);text-align:center}
+.shakehint b{color:var(--brass);font-weight:500}
+.toast{position:fixed;left:50%;top:84px;z-index:60;transform:translate(-50%,-30px);opacity:0;visibility:hidden;background:var(--brass);color:#1b140a;font-weight:700;font-size:15px;padding:11px 20px;border-radius:999px;box-shadow:0 14px 34px rgba(0,0,0,.45);transition:transform .35s cubic-bezier(.2,.8,.2,1),opacity .35s,visibility .35s}
+.toast.show{transform:translate(-50%,0);opacity:1;visibility:visible}
+
+/* ---------- Tarif kartı: nasıl kullanılır ---------- */
+.recipe{display:grid;grid-template-columns:minmax(0,.8fr) minmax(0,1.2fr);gap:clamp(28px,5vw,80px)}
+@media (max-width:860px){.recipe{grid-template-columns:1fr}}
+.recipe h2,.demo-head h2,.fold h2,.install h2,.faq h2,.bits h2{font-size:clamp(36px,4.6vw,60px)}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:clamp(18px,2.4vw,28px)}
+.h4{font:700 12px var(--body);letter-spacing:1.6px;text-transform:uppercase;color:var(--brass);margin:0 0 12px}
+.ings{list-style:none;margin:0;padding:0;display:grid;gap:6px}
+.ings li{display:grid;grid-template-columns:92px 1fr;gap:12px;padding:9px 12px;background:var(--ink);border-radius:8px;font-size:16px}
+.ings .amt{font-family:var(--mono);color:var(--brass);text-align:right;font-variant-numeric:tabular-nums}
+.ings li.opt{opacity:.7}
+.steps{list-style:none;margin:0;padding:0;display:grid;gap:0;counter-reset:s}
+.steps li{display:grid;grid-template-columns:56px 1fr;gap:18px;padding:22px 0;border-top:1px solid var(--line);counter-increment:s}
+.steps li:last-child{border-bottom:1px solid var(--line)}
+.steps li::before{content:counter(s,decimal-leading-zero);font:500 22px var(--mono);color:var(--brass);padding-top:2px}
+.steps h3{font-size:26px;margin-bottom:6px}
+.steps p{color:var(--muted);max-width:56ch}
+.mini{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px;align-items:center}
+.chip{border:1px solid var(--line);background:var(--ink);color:var(--cream);border-radius:999px;padding:7px 13px;font:500 14px var(--body);cursor:pointer;transition:background .15s,border-color .15s}
+.chip:hover{border-color:var(--brass)}
+.chip[aria-pressed="true"]{background:var(--brass-soft);border-color:var(--brass);color:#f6e2bd}
+.chip[aria-pressed="true"]::before{content:"✓ ";color:var(--brass)}
+.chip.static{cursor:default}
+.badge{font:700 11px var(--body);letter-spacing:.8px;text-transform:uppercase;padding:4px 8px;border-radius:6px;border:1px solid var(--line);color:var(--muted)}
+.badge.iba{color:var(--brass);border-color:var(--brass)}
+.badge.doga{color:#b9a7e8;border-color:#5f548a}
+.badge.uyar{color:#7fc79a;border-color:#3f6b50}
+.badge.strong{color:#f08c7a;border-color:#7a3a30}
+.fakebtn{background:var(--brass);color:#1b140a;border-radius:999px;padding:8px 18px;font-weight:700;font-size:14px}
+.prog{font:500 13px var(--mono);color:var(--muted)}
+.heart{font:600 14px var(--body);border:1px solid var(--brass);color:#f6e2bd;border-radius:999px;padding:7px 14px}
+
+/* ---------- Canlı deneme ---------- */
+.demo-head{display:flex;justify-content:space-between;align-items:end;gap:24px;flex-wrap:wrap;margin-bottom:28px}
+.demo{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:20px;align-items:start}
+@media (max-width:900px){.demo{grid-template-columns:1fr}}
+.demo .tools{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:14px}
+.search{flex:1 1 200px;background:var(--ink);border:1px solid var(--line);color:var(--cream);border-radius:10px;padding:11px 14px;font:16px var(--body)}
+.toggle{display:flex;gap:8px;align-items:center;color:var(--muted);font-size:14px;cursor:pointer}
+.toggle input{accent-color:var(--brass);width:17px;height:17px}
+.chips{display:flex;flex-wrap:wrap;gap:7px}
+.found{margin:0 0 12px}
+.found:empty{display:none}
+.found .lbl{font:500 12px var(--mono);color:var(--muted);width:100%;margin-bottom:6px}
+.makebar{display:flex;justify-content:space-between;align-items:center;gap:12px;border-top:1px solid var(--line);margin-top:16px;padding-top:16px}
+.count{font-size:14px;color:var(--muted)}
+.count b{font-family:var(--mono);color:var(--cream)}
+.res{min-height:520px}
+.restop{display:grid;grid-template-columns:170px minmax(0,1fr);gap:18px;align-items:center;margin-bottom:16px}
+@media (max-width:480px){.restop{grid-template-columns:1fr;justify-items:center;text-align:center}}
+.glassbox{background:radial-gradient(circle at 50% 60%,#2a3647 0%,var(--panel) 70%);border-radius:14px;padding:6px;width:100%}
+.glassbox svg{width:100%;height:auto;display:block}
+.rname{font-size:34px}
+.taste{color:var(--muted);margin:4px 0 10px}
+.badges{display:flex;gap:6px;flex-wrap:wrap}
+.blk{margin-top:16px}
+.method{max-width:62ch}
+.meta{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px;margin-top:14px}
+.meta div{background:var(--ink);border-radius:8px;padding:8px 12px;font-size:14px}
+.meta span{display:block;font:500 11px var(--mono);color:var(--muted)}
+.srcl{font-size:13px;color:var(--muted);margin-top:12px}
+.note{font-size:14px;background:var(--brass-soft);border-left:3px solid var(--brass);padding:9px 13px;border-radius:0 8px 8px 0;margin-top:12px}
+.resact{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px;align-items:center}
+.pouring{display:grid;justify-items:center;gap:8px;padding:30px 0}
+.pouring .g{width:200px}
+.pouring .p{font:500 46px var(--mono);color:var(--brass);font-variant-numeric:tabular-nums}
+.pouring .s{color:var(--muted);font-size:14px}
+
+/* ---------- Fold ---------- */
+.fold{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);gap:clamp(28px,5vw,72px);align-items:center}
+@media (max-width:900px){.fold{grid-template-columns:1fr}}
+.foldlist{list-style:none;margin:24px 0 0;padding:0;display:grid;gap:14px}
+.foldlist li{display:grid;grid-template-columns:110px 1fr;gap:14px;padding-top:14px;border-top:1px solid var(--line)}
+.foldlist b{font:500 13px var(--mono);color:var(--brass)}
+.foldlist span{color:var(--muted);font-size:15px}
+.device{perspective:1600px;display:grid;place-items:center;padding:20px 0}
+.dev{position:relative;width:min(100%,560px);aspect-ratio:4/3;display:grid;grid-template-columns:1fr 1fr;transform-style:preserve-3d}
+.page{position:relative;background:#0c1117;border:10px solid #2a2f36;padding:12px;overflow:hidden;display:grid;align-content:start;gap:8px}
+.leaf{grid-column:1;grid-row:1;position:relative;transform-style:preserve-3d;transform-origin:100% 50%;transform:rotateY(var(--open,0deg));z-index:2}
+.leaf>.page{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden}
+.page.l{border-right-width:2px;border-radius:26px 4px 4px 26px}
+.page.back{transform:rotateY(180deg);border-radius:26px;border-width:10px;display:grid;place-items:center;align-content:center;gap:10px;text-align:center}
+.page.back .pg-logo{font-size:26px}
+.page.back .cv{width:38%}
+.page.back small{font:500 10px var(--mono);color:var(--muted)}
+.page.r{grid-column:2;grid-row:1}
+.page.r{border-left-width:2px;border-radius:4px 26px 26px 4px}
+.crease{position:absolute;left:50%;top:6%;bottom:6%;width:2px;transform:translateX(-50%);background:linear-gradient(transparent,#ffffff22 30%,#ffffff22 70%,transparent);z-index:3;pointer-events:none}
+.pg-h{font:700 9px var(--body);letter-spacing:1.2px;text-transform:uppercase;color:var(--brass)}
+.pg-logo{font-family:var(--display);font-size:20px}
+.pg-logo em{color:var(--brass)}
+.pg-chips{display:flex;flex-wrap:wrap;gap:4px}
+.pg-chips i{font-style:normal;font-size:9.5px;border:1px solid var(--line);border-radius:999px;padding:3px 7px;color:var(--cream);white-space:nowrap}
+.pg-chips i.on{background:var(--brass-soft);border-color:var(--brass);color:#f6e2bd}
+.pg-make{justify-self:end;background:var(--brass);color:#1b140a;font-weight:800;font-size:10px;border-radius:999px;padding:5px 14px;margin-top:4px}
+.pg-glass{width:44%;justify-self:center}
+.pg-name{font-family:var(--display);font-size:19px;text-align:center}
+.pg-line{display:grid;grid-template-columns:44px 1fr;gap:6px;font-size:9.5px;background:#151c25;border-radius:4px;padding:4px 6px}
+.pg-line b{font:500 9.5px var(--mono);color:var(--brass);text-align:right}
+.foldcap{font:500 12px var(--mono);color:var(--muted);text-align:center;margin-top:12px}
+
+/* ---------- Küçük sürprizler ---------- */
+.bitlist{list-style:none;margin:36px 0 0;padding:0;columns:2 340px;column-gap:56px}
+.bitlist li{break-inside:avoid;padding:18px 0;border-top:1px solid var(--line)}
+.bitlist h3{font-size:26px;display:flex;justify-content:space-between;align-items:baseline;gap:12px}
+.bitlist h3 small{font:500 12px var(--mono);color:var(--brass);white-space:nowrap}
+.bitlist p{color:var(--muted);margin-top:6px;font-size:16px}
+
+/* ---------- Kurulum ---------- */
+.install{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:clamp(28px,5vw,72px);align-items:start}
+@media (max-width:860px){.install{grid-template-columns:1fr}}
+.dl{display:grid;gap:14px;margin-top:28px;justify-items:start}
+.dl .sub{font:500 12px var(--mono);color:var(--muted)}
+.warn{font-size:15px;color:var(--muted);border-left:3px solid #7a3a30;padding:6px 0 6px 14px;margin-top:22px;max-width:56ch}
+.warn b{color:#f0b1a4}
+
+/* ---------- SSS ---------- */
+.faq .qa{margin-top:28px;border-top:1px solid var(--line)}
+.faq details{border-bottom:1px solid var(--line);padding:4px 0}
+.faq summary{cursor:pointer;list-style:none;display:flex;justify-content:space-between;gap:16px;padding:16px 0;font-family:var(--display);font-size:24px}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary::after{content:"+";font:400 26px var(--mono);color:var(--brass);transition:transform .2s}
+.faq details[open] summary::after{transform:rotate(45deg)}
+.faq details p{color:var(--muted);padding:0 0 18px;max-width:70ch}
+
+footer{border-top:1px solid var(--line);padding:36px clamp(16px,4vw,48px) 48px;display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap;color:var(--muted);font-size:14px}
+footer .logo{font-size:24px}
+
+.bub{animation:rise 2.6s linear infinite}
+@keyframes rise{from{transform:translateY(0);opacity:0}10%{opacity:.8}to{transform:translateY(-110px);opacity:0}}
+.shaking{animation:shakeit .45s ease-in-out infinite}
+@keyframes shakeit{0%,100%{transform:rotate(0)}25%{transform:rotate(-5deg) translateX(-4px)}75%{transform:rotate(5deg) translateX(4px)}}
+@media (prefers-reduced-motion:reduce){.bub,.shaking{animation:none}}
+</style>
+</head>
+<body>
+<div class="bar" id="bar" aria-hidden="true"></div>
+<div class="jigger" aria-hidden="true">
+  <svg viewBox="0 0 54 260" id="jig">
+    <defs>
+      <clipPath id="jigclip"><path d="M8 6 L46 6 L40 250 L14 250 Z"/></clipPath>
+      <linearGradient id="jigfill" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#d8a95b"/><stop offset="1" stop-color="#8e3b1c"/></linearGradient>
+    </defs>
+    <g clip-path="url(#jigclip)"><rect id="jiglevel" x="0" y="250" width="54" height="0" fill="url(#jigfill)"/></g>
+    <path d="M8 6 L46 6 L40 250 L14 250 Z" fill="none" stroke="#ece5d8" stroke-opacity=".55" stroke-width="1.6"/>
+    <g id="jigticks" stroke="#ece5d8" stroke-opacity=".5" stroke-width="1"></g>
+  </svg>
+  <div class="ml" id="jigml">0 ml</div>
+</div>
+<div class="toast" id="toast" role="status"></div>
+
+<header class="top">
+  <a class="logo" href="#ust">doc<em>taile</em></a>
+  <nav aria-label="Bölümler">
+    <a href="#kullanim">Nasıl kullanılır</a>
+    <a href="#dene">Dene</a>
+    <a href="#sss">SSS</a>
+    <a class="btn primary" href="#indir">İndir</a>
+  </nav>
+</header>
+
+<main id="ust">
+  <!-- HERO -->
+  <section class="hero" aria-labelledby="h1">
+    <div>
+      <p class="eyebrow">0 ml · Android için kokteyl ustası</p>
+      <h1 id="h1">Barında ne varsa, <em>ondan bir kokteyl.</em></h1>
+      <p class="lede">doctaile elindeki şişelere bakar ve onlarla gerçekten yapılabilecek kokteyli seçer: ölçüleri mililitre mililitre, yapılışı adım adım, bardağı ve garnitürüyle. Eksik malzeme yok, “bir de şunu alın” yok.</p>
+      <div class="ctas">
+        <a class="btn primary" href="#indir">APK'yı indir <small>v1.2 · 220 KB</small></a>
+        <a class="btn" href="#dene">Tarayıcıda dene</a>
+      </div>
+      <div class="facts">
+        <div><b data-count="156">156</b><span>malzeme</span></div>
+        <div><b data-count="217">217</b><span>tarif</span></div>
+        <div><b>0</b><span>internet gerekmez</span></div>
+      </div>
+    </div>
+    <div class="stagebox">
+      <div class="halo"></div>
+      <div class="heroglass" id="heroGlass" role="img" aria-label="doctaile kokteyl bardağı"></div>
+      <div class="nowserving" aria-live="polite">
+        <span class="k">ŞU AN BARDAKTA</span>
+        <span class="n" id="heroName">Highland Burns</span>
+        <span class="pct" id="heroPct">90 ml</span>
+        <span class="t" id="heroTaste">güçlü, otsu, hafif isli</span>
+      </div>
+      <p class="shakehint" id="shakeHint">Fareyi bardağın üstünde hızlıca <b>sağa sola salla</b>: yeni bir kokteyl karışsın.</p>
+    </div>
+  </section>
+
+  <!-- KULLANIM -->
+  <section id="kullanim" aria-labelledby="h-kul">
+    <div class="recipe">
+      <div>
+        <p class="eyebrow" data-ml>15 ml · Tarif</p>
+        <h2 id="h-kul">doctaile nasıl kullanılır?</h2>
+        <p class="lede" style="margin-top:18px">Kullanım kılavuzunu da uygulamanın kendi tarif kartı biçiminde yazdık.</p>
+        <div class="card" style="margin-top:28px">
+          <p class="h4">Malzemeler</p>
+          <ul class="ings">
+            <li><span class="amt">1 adet</span><span>Android telefon (7.0 ve üstü)</span></li>
+            <li><span class="amt">1 adet</span><span>e-posta adresi, şifresiz</span></li>
+            <li><span class="amt">ne varsa</span><span>evdeki şişeler, meyve suları, buz</span></li>
+            <li><span class="amt">0 ml</span><span>internet</span></li>
+            <li class="opt"><span class="amt">isteğe bağlı</span><span>Galaxy Z Fold 8 <em style="color:var(--muted)">(iki sayfalık bar için)</em></span></li>
+          </ul>
+        </div>
+      </div>
+      <div>
+        <p class="h4" style="margin-top:6px">Yapılışı</p>
+        <ol class="steps">
+          <li><div><h3>E-postanla gir</h3><p>Şifre yok, doğrulama yok. Profilin yalnızca telefonda saklanır; aynı telefonda her kişi kendi barını tutar. İlk girişte hiçbir şey seçili gelmez, tüm raflar kapalıdır.</p></div></li>
+          <li><div><h3>Raflardan seç</h3><p>156 malzeme 17 rafa dizili: viskiler, vermutlar, likörler, şuruplar, taze otlar... Aramaya yaz; listede olmayanı (ör. “sahlep likörü”) türünü seçip kendin ekle.</p>
+            <div class="mini"><span class="chip static" aria-pressed="true">Scotch viski</span><span class="chip static" aria-pressed="true">Tatlı vermut</span><span class="chip static">Kola</span><span class="chip static" aria-pressed="true">Jägermeister</span></div></div></li>
+          <li><div><h3>Make'e bas ya da salla</h3><p>Telefonu shaker gibi salla; doctaile titreşerek kokteylini karıştırır, bardak ekranda dolarken yüzdeyi izlersin.</p>
+            <div class="mini"><span class="fakebtn">Make</span><span class="prog">Buz ekleniyor… 42%</span></div></div></li>
+          <li><div><h3>Tarifi oku</h3><p>Ölçüler, yapılış, bardak, garnitür ve kaynak. Her tarifte etiket var: <span class="badge iba">IBA klasiği</span> <span class="badge uyar">Uyarlama</span> <span class="badge doga">Ev yapımı doğaçlama</span>. Hangisinin klasik, hangisinin doctaile'ın yorumu olduğunu hep bilirsin.</p></div></li>
+          <li><div><h3>Favorile, tekrar etme</h3><p>Beğendiğini favorilere ekle. Aynı malzemelerle yapılabilecek bütün kokteyller gösterilmeden aynısı karşına bir daha çıkmaz; hepsi bitince liste baştan başlar.</p>
+            <div class="mini"><span class="heart">♥ Favorilerde</span><span class="prog">Bu malzemelerle 7 kokteyl · 3. öneri</span></div></div></li>
+        </ol>
+      </div>
+    </div>
+  </section>
+
+  <!-- CANLI DENEME -->
+  <section id="dene" aria-labelledby="h-dene">
+    <div class="demo-head">
+      <div>
+        <p class="eyebrow" data-ml>30 ml · Canlı deneme</p>
+        <h2 id="h-dene">Barını kur, hemen dene.</h2>
+      </div>
+      <p class="lede" style="max-width:44ch">Burada çalışan, uygulamanın kendi tarif motoru. Örnek bir bar seçili geliyor; değiştir ve Make'e bas.</p>
+    </div>
+    <div class="demo">
+      <div class="card">
+        <div class="tools">
+          <input class="search" id="q" type="search" placeholder="156 malzemede ara (ör. Aperol, nane)" aria-label="Malzeme ara">
+          <label class="toggle" for="mock"><input type="checkbox" id="mock"> Alkolsüz</label>
+        </div>
+        <div class="chips found" id="found"></div>
+        <div class="chips" id="chips"></div>
+        <div class="makebar">
+          <span class="count"><b id="cnt">0</b> malzeme seçili · <button class="chip" type="button" id="clear" style="padding:4px 10px;font-size:13px">temizle</button></span>
+          <button class="btn primary" type="button" id="make">Make</button>
+        </div>
+      </div>
+      <div class="card res" id="res" aria-live="polite"></div>
+    </div>
+  </section>
+
+  <!-- FOLD -->
+  <section id="fold" aria-labelledby="h-fold">
+    <div class="fold">
+      <div>
+        <p class="eyebrow" data-ml>45 ml · Galaxy Z Fold 8</p>
+        <h2 id="h-fold">Telefonu aç, bar iki sayfa olsun.</h2>
+        <p class="lede" style="margin-top:18px">Fold açıldığında doctaile kitap moduna geçer: sol sayfada raflar, sağ sayfada tezgâh. Menteşenin üstüne tek bir harf bile düşmez.</p>
+        <ul class="foldlist">
+          <li><b>KAPAK EKRANI</b><span>Tek sütun raflar, altta sabit Make çubuğu, tarif alttan açılan sayfada. Geri tuşu sayfayı kapatır.</span></li>
+          <li><b>AÇIK, YATAY</b><span>Sol yarı malzemeler, sağ yarı hazırlanış ve alternatifler. İki sayfa ayrı ayrı kayar.</span></li>
+          <li><b>AÇIK, DİKEY</b><span>Katlama çizgisi yataya döner: üstte raflar, altta tezgâh.</span></li>
+          <li><b>AÇ / KAPAT</b><span>Uygulama yeniden başlamaz; seçimin ve bardaktaki tarif olduğu yerde kalır.</span></li>
+        </ul>
+      </div>
+      <div>
+        <div class="device" id="device">
+          <div class="dev" id="dev">
+            <div class="leaf">
+            <div class="page l">
+              <span class="pg-logo">doc<em>taile</em></span>
+              <span class="pg-h">Viskiler · 1/7</span>
+              <div class="pg-chips"><i class="on">Scotch viski</i><i>Burbon</i><i>Rye viski</i><i>Japon viskisi</i></div>
+              <span class="pg-h">Vermut & aperatif · 1/9</span>
+              <div class="pg-chips"><i class="on">Tatlı vermut</i><i>Martini Bianco</i><i>Campari</i><i>Aperol</i></div>
+              <span class="pg-h">Amaro & bitkisel · 1/10</span>
+              <div class="pg-chips"><i class="on">Jägermeister</i><i>Fernet</i><i>Bénédictine</i></div>
+              <span class="pg-h">Gazlı karıştırıcılar · 2/8</span>
+              <div class="pg-chips"><i class="on">Kola</i><i class="on">Soda</i><i>Tonik</i></div>
+              <span class="pg-make">Make</span>
+            </div>
+            <div class="page back" aria-hidden="true"><span class="pg-logo">doc<em>taile</em></span><div class="cv" id="coverGlass"></div><small>KAPAK EKRANI · 5,4″</small><span class="pg-make" style="justify-self:center">Make</span></div>
+            </div>
+            <div class="page r">
+              <span class="pg-h" style="justify-self:center">Bar tezgâhı</span>
+              <div class="pg-glass" id="foldGlass"></div>
+              <span class="pg-name">Highland Burns</span>
+              <div class="pg-line"><b>50 ml</b><span>scotch viski</span></div>
+              <div class="pg-line"><b>25 ml</b><span>tatlı vermut (Rosso)</span></div>
+              <div class="pg-line"><b>7,5 ml</b><span>Jägermeister</span></div>
+            </div>
+            <div class="crease"></div>
+          </div>
+        </div>
+        <p class="foldcap" id="foldcap">Kaydırdıkça açılır · iç ekran 7,6″ · 4:3</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- KÜÇÜK SÜRPRİZLER -->
+  <section class="bits" aria-labelledby="h-bits">
+    <p class="eyebrow" data-ml>60 ml · Küçük ayrıntılar</p>
+    <h2 id="h-bits">Barmenin kolundaki numaralar.</h2>
+    <ul class="bitlist">
+      <li><h3>Salla, karışsın <small>shaker modu</small></h3><p>Make'e basmana gerek yok: telefonu üç kez salla, kokteyl hazırlanmaya başlar. Hazırlanırken telefon shaker ritminde titrer.</p></li>
+      <li><h3>Sıvı hep düz <small>yerçekimi</small></h3><p>Tarif ekranında telefonu yatır; bardaktaki içki yerçekimine göre düz kalır, hafifçe çalkalanır. Bu sayfanın en üstündeki bardak da fareni izler.</p></li>
+      <li><h3>Aynısı iki kez gelmez <small>tekrarsız sıra</small></h3><p>Seçtiğin malzemelerle yapılabilecek her kokteyl bir kez gösterilir, sonra liste baştan başlar. Sıra profilinde saklanır.</p></li>
+      <li><h3>Favoriler <small>♥</small></h3><p>Beğendiğin tarifler “Favorilerim”de tarihiyle durur; birine dokun, yeniden hazırlansın.</p></li>
+      <li><h3>Kendi malzemen <small>+ ekle</small></h3><p>Listede olmayan şişeyi türünü seçip ekle; doctaile onu bar şablonlarıyla bir tarife yerleştirir.</p></li>
+      <li><h3>Alkolsüz mod <small>0,0 %</small></h3><p>Tek dokunuşla yalnızca mocktail'ler: Virgin Mojito'dan Naneli Ayran Cooler'a.</p></li>
+      <li><h3>Türk dokunuşu <small>rakı · şalgam · nar</small></h3><p>Karpuzlu Rakı Smash, Şalgam Mary, Nar Spritz, Vişne Fizz. Rakıya önce su, sonra buz.</p></li>
+      <li><h3>Tamamen çevrimdışı <small>0 ml internet</small></h3><p>Yazı tipleri dahil her şey uygulamanın içinde. İnternet izni bile istemez.</p></li>
+    </ul>
+  </section>
+
+  <!-- İNDİR -->
+  <section id="indir" aria-labelledby="h-indir">
+    <div class="install">
+      <div>
+        <p class="eyebrow" data-ml>75 ml · İndir ve kur</p>
+        <h2 id="h-indir">Bardağı doldurmaya hazır.</h2>
+        <p class="lede" style="margin-top:18px">doctaile ücretsizdir. Play Store'da değil, doğrudan APK olarak dağıtılıyor.</p>
+        <div class="dl">
+          <a class="btn primary" href="https://github.com/dkarakurt/dkarakurt-doctaile-android/releases/latest/download/doctaile.apk">doctaile.apk'yı indir <small>en son sürüm</small></a>
+          <span class="sub">Android 7.0+ · ~220 KB · paket: com.doctaile.app</span>
+          <a href="https://github.com/dkarakurt/dkarakurt-doctaile-android/releases" style="font-size:14px">Tüm sürümler ve kaynak kodu GitHub'da</a>
+        </div>
+      </div>
+      <div>
+        <ol class="steps">
+          <li><div><h3>APK'yı indir</h3><p>Bu sayfayı telefonunda aç ve düğmeye dokun. Bilgisayardan indirdiysen dosyayı telefona at.</p></div></li>
+          <li><div><h3>Kaynağa izin ver</h3><p>İndirilen dosyaya dokun. Telefon “bilinmeyen uygulamalar” izni isterse dosyayı açtığın uygulamaya (Chrome, Dosyalarım) izin ver.</p></div></li>
+          <li><div><h3>Yine de yükle</h3><p>Play Protect, uygulama mağazadan gelmediği için uyarabilir. “Yine de yükle”ye dokun.</p></div></li>
+          <li><div><h3>Aç ve gir</h3><p>doctaile'ı aç, e-postanı yaz, raflarını doldur.</p></div></li>
+        </ol>
+      </div>
+    </div>
+  </section>
+
+  <!-- SSS -->
+  <section class="faq" id="sss" aria-labelledby="h-sss">
+    <p class="eyebrow" data-ml>90 ml · Sorular</p>
+    <h2 id="h-sss">Sık sorulanlar</h2>
+    <div class="qa">
+      <details><summary>Verilerim nereye gidiyor?</summary><p>Hiçbir yere. E-postan yalnızca profil adı olarak kullanılır; seçimlerin, favorilerin ve eklediğin malzemeler telefonun içinde saklanır. Uygulamanın internet izni yoktur.</p></details>
+      <details><summary>Tarifler nereden geliyor?</summary><p>Klasikler Uluslararası Barmenler Birliği'nin (IBA) resmî listesine ve Difford's Guide'a dayanır; kaynak bağlantısı tarifin altındadır. Uyarlamalar ve doğaçlamalar ayrıca etiketlenir.</p></details>
+      <details><summary>iPhone'da çalışır mı?</summary><p>Şimdilik yalnızca Android. Bu sayfadaki canlı deneme her tarayıcıda çalışır ve uygulamayla aynı tarif motorunu kullanır.</p></details>
+      <details><summary>Listede olmayan bir şişem var.</summary><p>Aramaya adını yaz, “listede yok, ekle” kutusunda türünü seç (ana içki, likör, karıştırıcı…). doctaile onu bar şablonlarına yerleştirip bir tarif kurar.</p></details>
+      <details><summary>Neden yeni sürümü üstüne kuramıyorum?</summary><p>Sürümler şimdilik her derlemede farklı bir anahtarla imzalanıyor; Android farklı imzalı bir sürümü eskisinin üstüne kurmaz. Eski sürümü kaldırıp yenisini kur.</p></details>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <span class="logo">doc<em>taile</em></span>
+  <span>Alkollü tarifler 18 yaş ve üzeri içindir. Sorumlu iç; içtiysen direksiyona geçme.</span>
+  <a href="https://github.com/dkarakurt/dkarakurt-doctaile-android">GitHub</a>
+</footer>
+
+<script>
+// ---------- Malzemeler: [id, liste adı, rol, tarifte görünen ad] ----------
+// Roller: S ana içki · A aperatif/vermut/amaro · L likör · W şarap/köpüklü/bira · R hazır alkollü karışım
+//         M gazlı karıştırıcı · J meyve suyu/düz karıştırıcı · C ekşi · Y tatlandırıcı · D süt/krema/yumurta · B bitter · H taze ot/meyve · X kiler/baharat
+const ING = [
+  {cat:"Viskiler", items:[
+    ["scotch","Scotch viski (Black Label vb.)","S","scotch viski"],["islay","İsli / Islay viskisi (Laphroaig vb.)","S","isli Islay viskisi"],["bourbon","Burbon / Jack Daniel's","S","burbon"],["rye","Rye viski","S","rye viski"],["irish","İrlanda viskisi (Jameson vb.)","S","İrlanda viskisi"],["japanese","Japon viskisi","S","Japon viskisi"],["canadian","Kanada viskisi","S","Kanada viskisi"]]},
+  {cat:"Votka, cin & anasonlular", items:[
+    ["vodka","Votka","S","votka"],["flavvodka","Aromalı votka (vanilya, limon)","S","aromalı votka"],["gin","Cin (London Dry)","S","cin"],["oldtom","Old Tom cin","S","Old Tom cin"],["sloe","Sloe gin","L","sloe gin"],["raki","Rakı","S","rakı"],["ouzo","Uzo / anason içkisi","S","uzo"],["absinthe","Absent","S","absent"],["grappa","Grappa","S","grappa"],["soju","Soju","S","soju"],["sake","Sake","W","sake"]]},
+  {cat:"Rom, agave & Latin", items:[
+    ["wrum","Beyaz rom","S","beyaz rom"],["drum","Koyu / altın rom","S","koyu rom"],["spicedrum","Baharatlı rom (Captain Morgan vb.)","S","baharatlı rom"],["overproof","Overproof rom","S","overproof rom"],["cachaca","Cachaça","S","cachaça"],["tequila","Tekila (blanco)","S","tekila"],["reposado","Tekila reposado / añejo","S","reposado tekila"],["mezcal","Mezcal","S","mezcal"],["pisco","Pisco","S","pisco"]]},
+  {cat:"Brendiler", items:[
+    ["cognac","Konyak / brendi","S","konyak"],["calvados","Calvados / elma brendisi","S","calvados"],["apricot","Kayısı brendisi / likörü","L","kayısı brendisi"],["cherrybr","Kiraz likörü (Cherry Heering, kirsch)","L","kiraz likörü"],["peachbr","Şeftali brendisi","L","şeftali brendisi"]]},
+  {cat:"Vermut & aperatif", items:[
+    ["rosso","Tatlı vermut (Martini Rosso)","A","tatlı vermut (Rosso)"],["bianco","Beyaz vermut (Martini Bianco)","A","Martini Bianco"],["dry","Kuru vermut (Extra Dry)","A","kuru vermut"],["rosato","Pembe vermut (Martini Rosato)","A","pembe vermut"],["lillet","Lillet Blanc / Cocchi Americano","A","Lillet Blanc"],["campari","Campari","A","Campari"],["aperol","Aperol","A","Aperol"],["select","Select / diğer kırmızı bitter aperatifler","A","kırmızı bitter aperatif"],["pimms","Pimm's No.1","A","Pimm's"]]},
+  {cat:"Amaro & bitkisel likörler", items:[
+    ["jager","Jägermeister","L","Jägermeister"],["fernet","Fernet-Branca","A","Fernet-Branca"],["cynar","Cynar","A","Cynar"],["amaro","Amaro (Nonino, Montenegro, Averna)","A","amaro"],["chartg","Yeşil Chartreuse","L","yeşil Chartreuse"],["charty","Sarı Chartreuse","L","sarı Chartreuse"],["benedictine","Bénédictine","L","Bénédictine"],["drambuie","Drambuie","L","Drambuie"],["galliano","Galliano","L","Galliano"],["sambuca","Sambuca","L","sambuca"]]},
+  {cat:"Meyve likörleri", items:[
+    ["triple","Portakal likörü (Cointreau, Triple Sec, Grand Marnier)","L","portakal likörü"],["curacao","Blue Curaçao","L","Blue Curaçao"],["maraschino","Maraschino likörü","L","maraschino likörü"],["peach","Şeftali likörü / schnapps","L","şeftali likörü"],["chambord","Ahududu likörü (Chambord)","L","ahududu likörü"],["cassis","Crème de cassis (frenk üzümü)","L","crème de cassis"],["mure","Böğürtlen likörü (crème de mûre)","L","böğürtlen likörü"],["elderliq","Mürver çiçeği likörü (St-Germain)","L","mürver çiçeği likörü"],["violette","Crème de violette","L","crème de violette"],["midori","Kavun likörü (Midori)","L","Midori"],["malibu","Hindistancevizi likörü (Malibu)","L","Malibu"],["passoa","Çarkıfelek likörü (Passoa)","L","Passoa"],["applel","Elma likörü (sour apple)","L","elma likörü"],["banana","Muz likörü","L","muz likörü"],["limoncello","Limoncello","L","limoncello"],["falernum","Falernum","L","falernum"]]},
+  {cat:"Kremalı, kahveli & kuruyemiş likörleri", items:[
+    ["kahlua","Kahve likörü (Kahlúa)","L","kahve likörü"],["baileys","Baileys / kremalı likör","L","Baileys"],["amaretto","Amaretto","L","amaretto"],["frangelico","Fındık likörü (Frangelico)","L","fındık likörü"],["cacaodark","Kakao likörü (koyu)","L","koyu kakao likörü"],["cacaowhite","Kakao likörü (beyaz)","L","beyaz kakao likörü"],["menthe","Nane likörü (crème de menthe)","L","nane likörü"],["advocaat","Advocaat (yumurta likörü)","L","advocaat"]]},
+  {cat:"Şarap, köpüklü & bira", items:[
+    ["prosecco","Köpüklü şarap (prosecco, şampanya, cava)","W","köpüklü şarap"],["whitewine","Beyaz şarap","W","kuru beyaz şarap"],["redwine","Kırmızı şarap","W","kırmızı şarap"],["rosewine","Roze şarap","W","roze şarap"],["port","Porto şarabı","W","porto"],["sherry","Şeri (fino, amontillado)","W","şeri"],["beer","Bira (lager)","W","soğuk bira"],["stout","Stout / koyu bira (Guinness)","W","stout"],["cider","Elma şarabı (cider)","W","cider"]]},
+  {cat:"Hazır karışımlar", items:[
+    ["mojitomix","Hazır mojito (Bacardi Mojito)","R","hazır mojito"],["coollime","Cool lime / naneli limonata","J","cool lime"],["sourmix","Hazır sour / margarita karışımı","J","hazır sour karışımı"],["energy","Enerji içeceği (Red Bull vb.)","M","enerji içeceği"],["icetea","Hazır ice tea (şeftali, limon)","J","ice tea"]]},
+  {cat:"Gazlı karıştırıcılar", items:[
+    ["cola","Kola","M","kola"],["soda","Soda / maden suyu","M","soda"],["tonic","Tonik","M","tonik"],["ginger","Ginger ale / ginger beer","M","ginger ale/beer"],["sprite","Limonlu gazoz (Sprite, 7Up)","M","limonlu gazoz"],["gfsoda","Greyfurtlu gazoz","M","greyfurtlu gazoz"],["fanta","Portakallı gazoz","M","portakallı gazoz"],["kombucha","Kombucha","M","kombucha"]]},
+  {cat:"Meyve suları & düz karıştırıcılar", items:[
+    ["oj","Portakal suyu","J","portakal suyu"],["pine","Ananas suyu","J","ananas suyu"],["cran","Kızılcık suyu","J","kızılcık suyu"],["visne","Vişne suyu","J","vişne suyu"],["nar","Nar suyu","J","nar suyu"],["gfjuice","Greyfurt suyu","J","greyfurt suyu"],["applej","Elma suyu","J","elma suyu"],["peachp","Şeftali püresi / nektarı","J","şeftali püresi"],["mango","Mango suyu / püresi","J","mango püresi"],["passion","Çarkıfelek püresi","J","çarkıfelek püresi"],["tomato","Domates suyu","J","domates suyu"],["salgam","Şalgam suyu","J","şalgam suyu"],["coconutw","Hindistancevizi suyu","J","hindistancevizi suyu"],["ayran","Ayran","J","ayran"],["coffee","Kahve / espresso","J","soğumuş sert kahve"],["tea","Soğuk çay","J","soğuk demlenmiş çay"]]},
+  {cat:"Şuruplar & tatlandırıcılar", items:[
+    ["sugar","Şeker","Y","basit şurup (1:1 şeker + su)"],["brownsugar","Esmer şeker / küp şeker","Y","esmer şeker şurubu"],["honey","Bal","Y","bal şurubu (3:1 bal + sıcak su)"],["agave_s","Agave şurubu","Y","agave şurubu"],["maple","Akçaağaç şurubu","Y","akçaağaç şurubu"],["grenadine","Grenadin (nar şurubu)","Y","grenadin"],["orgeat","Orgeat / badem şurubu","Y","orgeat"],["vanillas","Vanilya şurubu","Y","vanilya şurubu"],["eldersyr","Mürver çiçeği şurubu","Y","mürver çiçeği şurubu"],["raspsyr","Ahududu şurubu","Y","ahududu şurubu"]]},
+  {cat:"Süt, krema & yumurta", items:[
+    ["cream","Krema","D","krema"],["milk","Süt","D","süt"],["coconutc","Hindistancevizi kreması","D","hindistancevizi kreması"],["egg","Yumurta","D","yumurta akı"],["icecream","Vanilyalı dondurma","D","vanilyalı dondurma"]]},
+  {cat:"Bitterler", items:[
+    ["bitters","Angostura bitter","B","Angostura"],["obitters","Portakal bitter","B","portakal bitter"],["peychaud","Peychaud's bitter","B","Peychaud's bitter"]]},
+  {cat:"Narenciye, taze ot & meyve", items:[
+    ["lemon","Limon","C","taze limon suyu"],["lime","Misket limonu","C","taze misket limonu suyu"],["orange","Portakal (meyve)","H","portakal"],["mint","Taze nane","H","taze nane yaprağı"],["basil","Fesleğen","H","fesleğen yaprağı"],["rosemary","Biberiye","H","biberiye dalı"],["thyme","Kekik","H","taze kekik dalı"],["cucumber","Salatalık","H","salatalık dilimi"],["gingerroot","Taze zencefil","H","taze zencefil dilimi"],["chili","Acı biber / jalapeño","H","acı biber dilimi"],["strawberry","Çilek","H","çilek"],["berries","Ahududu / böğürtlen","H","taze ahududu/böğürtlen"],["watermelon","Karpuz","H","karpuz"],["apple","Elma","H","elma"],["cherry","Kokteyl kirazı","H","kokteyl kirazı"],["olive","Zeytin","H","zeytin"]]},
+  {cat:"Kiler & baharat", items:[
+    ["salt","Tuz","X","tuz"],["pepper","Karabiber","X","karabiber"],["tabasco","Acı sos (Tabasco)","X","acı sos"],["worcester","Worcestershire sos","X","Worcestershire sos"],["cinnamon","Tarçın","X","tarçın çubuğu"],["clove","Karanfil","X","karanfil"],["nutmeg","Muskat","X","rendelenmiş muskat"],["beans","Kahve çekirdeği","X","kahve çekirdeği"],["cocoa","Kakao tozu","X","kakao tozu"]]}
+];
+
+const GROUPS = {
+  sour:{m:["lime","lemon"],l:"limon veya misket limonu"},
+  sourL:{m:["lemon","lime"],l:"limon veya misket limonu"},
+  sweet:{m:["sugar","brownsugar","honey","agave_s","maple"],l:"şeker, bal veya şurup"},
+  whisky:{m:["scotch","bourbon","rye","irish","canadian","japanese","islay"],l:"viski"},
+  bwhisky:{m:["bourbon","rye","scotch","irish","canadian","japanese"],l:"viski"},
+  ryeG:{m:["rye","bourbon","canadian"],l:"rye veya burbon"},
+  rum:{m:["wrum","drum","spicedrum"],l:"rom"},
+  drumG:{m:["drum","spicedrum","wrum"],l:"rom"},
+  agave:{m:["tequila","reposado","mezcal"],l:"tekila veya mezcal"},
+  tequilaG:{m:["tequila","reposado"],l:"tekila"},
+  vodkaG:{m:["vodka","flavvodka"],l:"votka"},
+  ginG:{m:["gin","oldtom"],l:"cin"},
+  oldG:{m:["oldtom","gin"],l:"cin"},
+  hb:{m:["soda","ginger","tonic"],l:"soda, ginger ale veya tonik"},
+  vfizz:{m:["tonic","soda","sprite"],l:"tonik, soda veya limonlu gazoz"},
+  sweetfizz:{m:["sprite","soda"],l:"limonlu gazoz veya soda"},
+  gasG:{m:["sprite","ginger"],l:"limonlu gazoz veya ginger ale"},
+  creamG:{m:["cream","milk"],l:"krema veya süt"},
+  redj:{m:["cran","visne"],l:"kızılcık veya vişne suyu"},
+  gf:{m:["gfsoda","gfjuice"],l:"greyfurtlu gazoz veya greyfurt suyu"},
+  elder:{m:["elderliq","eldersyr"],l:"mürver çiçeği likörü veya şurubu"},
+  rasp:{m:["raspsyr","berries","chambord"],l:"ahududu şurubu veya taze ahududu"},
+  orangeL:{m:["triple","curacao"],l:"portakal likörü"},
+  bittersG:{m:["bitters","obitters","peychaud"],l:"bitter"},
+  tropj:{m:["pine","oj"],l:"ananas veya portakal suyu"}
+};
+
+const iba = s => ({t:"iba", url:"https://iba-world.com/iba-cocktail/"+s+"/"});
+const KL = {t:"klasik"}, DOGA = {t:"doga"}, TR = {t:"klasik", label:"Türk dokunuşu"}, YAY = {t:"klasik", label:"Yaygın versiyon"};
+// Tarif: req (zorunlu), lines [miktar, anahtar], opt [miktar, anahtar], glass, color, garnish [metin, tür]
+const R = [
+ // --- Viski
+ {id:"highlandburns", name:"Highland Burns", taste:"güçlü, otsu, hafif isli", req:["scotch","rosso","jager"], lines:[["50 ml","scotch"],["25 ml","rosso"],["7,5–10 ml","jager"]], opt:[["3–4 damla","coffee"],["2 dash","bitters"]], method:"Bir bardağı buzla doldur, malzemeleri ekleyip 25–30 saniye karıştır (çalkalama). Soğutulmuş coupe'a ya da tek büyük buzlu rocks bardağına süz.", garnish:["Portakal kabuğu yağı","peel"], glass:"coupe", color:"#8e3b1c", src:{t:"uyarlama", url:"https://www.diffordsguide.com/cocktails/recipe/280/bobby-burns-craddocks-recipe", orig:"Bobby Burns"}, info:"Bobby Burns'ün uyarlaması: Bénédictine yerine Jägermeister. Orijinali: 45 ml scotch, 45 ml tatlı vermut, 7,5 ml Bénédictine.", strong:true, pri:3},
+ {id:"bobbyburns", name:"Bobby Burns", taste:"güçlü, bitkisel, yuvarlak", req:["scotch","rosso","benedictine"], lines:[["45 ml","scotch"],["45 ml","rosso"],["7,5 ml","benedictine"]], method:"Buzla 25–30 saniye karıştır, soğuk coupe'a süz, limon kabuğunu üstünde sıkıp at.", garnish:["Limon kabuğu, kiraz","cherry"], glass:"coupe", color:"#8a3a1c", src:{t:"diff", url:"https://www.diffordsguide.com/cocktails/recipe/280/bobby-burns-craddocks-recipe", label:"Craddock, 1930"}, strong:true, pri:3},
+ {id:"robroy", name:"Rob Roy", taste:"güçlü, yumuşak, kirazlı", req:["scotch","rosso"], lines:[["50 ml","scotch"],["25 ml","rosso"]], opt:[["1 dash","bittersG"]], method:"Buzla dolu bir bardakta 25–30 saniye karıştır, soğuk coupe'a süz.", garnish:["Kokteyl kirazı","cherry"], glass:"coupe", color:"#7f2e17", src:KL, info:"Manhattan'ın İskoç viskili hali.", strong:true, pri:2},
+ {id:"penicillin", name:"Penicillin", taste:"ballı, zencefilli, isli", req:["scotch","lemon","honey","gingerroot"], lines:[["60 ml","scotch"],["22,5 ml","lemon"],["22,5 ml","honey"],["2–3 ince dilim","gingerroot"]], opt:[["7,5 ml (üste)","islay"]], method:"Zencefili bal şurubuyla shaker'da ez, scotch ve limonu ekle, buzla çalkala. Buzlu rocks bardağına çift süz; isli viski varsa kaşıkla üste yatır.", garnish:["Limon kabuğu","peel"], glass:"rocks", color:"#e0b45a", src:iba("penicillin"), pri:3},
+ {id:"rustynail", name:"Rusty Nail", taste:"ballı, bitkisel, güçlü", req:["scotch","drambuie"], lines:[["45 ml","scotch"],["25 ml","drambuie"]], method:"Buzlu rocks bardağında karıştır.", garnish:["Limon kabuğu","peel"], glass:"rocks", color:"#b9741f", src:iba("rusty-nail"), strong:true, pri:2},
+ {id:"bloodsand", name:"Blood and Sand", taste:"meyveli, kirazlı", req:["scotch","cherrybr","rosso","oj"], lines:[["22,5 ml","scotch"],["22,5 ml","cherrybr"],["22,5 ml","rosso"],["22,5 ml","oj"]], method:"Buzla çalkala, soğuk coupe'a süz.", garnish:["Portakal kabuğu","peel"], glass:"coupe", color:"#a3341f", src:KL, pri:3},
+ {id:"oldfashioned", name:"Old Fashioned", taste:"güçlü, aromatik, hafif tatlı", req:["bwhisky","sweet","bittersG"], lines:[["60 ml","bwhisky"],["7,5 ml","sweet"],["2 dash","bittersG"]], method:"Rocks bardağında şurup ve bitteri karıştır, büyük buz ekle, viskiyi koyup 30 saniye karıştır.", garnish:["Portakal kabuğu","peel"], glass:"rocks", color:"#a85a1c", src:iba("old-fashioned"), strong:true, pri:3},
+ {id:"whiskeysour", name:"Whiskey Sour", taste:"ekşi-tatlı, dengeli", req:["bwhisky","sour","sweet"], lines:[["45 ml","bwhisky"],["25 ml","sourL"],["20 ml","sweet"]], opt:[["1 adet","egg"]], method:"Yumurta akı kullanıyorsan önce buzsuz 10 sn çalkala. Sonra bol buzla 12–15 sn çalkala, buzlu rocks bardağına süz.", garnish:["Limon dilimi","lemon"], glass:"rocks", color:"#e2b14d", top:{c:"#f4ead2",h:8,need:"egg"}, src:iba("whiskey-sour"), pri:3},
+ {id:"nysour", name:"New York Sour", taste:"ekşi, şaraplı katmanlı", req:["bwhisky","sour","sweet","redwine"], lines:[["60 ml","bwhisky"],["30 ml","sourL"],["22,5 ml","sweet"],["15 ml (üste)","redwine"]], opt:[["Birkaç damla","egg"]], method:"Şarap dışındakileri buzla çalkala, buzlu rocks'a süz. Kırmızı şarabı kaşığın sırtından üste yatır.", garnish:["—","none"], glass:"rocks", color:"#e1b04f", top:{c:"#6a1020",h:12}, src:iba("new-york-sour"), pri:3},
+ {id:"manhattan", name:"Manhattan", taste:"güçlü, yuvarlak, baharatlı", req:["ryeG","rosso"], lines:[["50 ml","ryeG"],["20 ml","rosso"]], opt:[["1 dash","bittersG"]], method:"Buzla 25–30 saniye karıştır, soğuk coupe'a süz.", garnish:["Kokteyl kirazı","cherry"], glass:"coupe", color:"#7a2a14", src:iba("manhattan"), strong:true, pri:3},
+ {id:"boulevardier", name:"Boulevardier", taste:"acı-tatlı, güçlü", req:["bwhisky","rosso","campari"], lines:[["45 ml","bwhisky"],["30 ml","rosso"],["30 ml","campari"]], method:"Buzla karıştır, tek büyük buzlu rocks bardağına süz.", garnish:["Portakal kabuğu","peel"], glass:"rocks", color:"#7d1a12", src:iba("boulevardier"), strong:true, pri:3},
+ {id:"oldpal", name:"Old Pal", taste:"kuru, acımsı", req:["ryeG","dry","campari"], lines:[["30 ml","ryeG"],["30 ml","dry"],["30 ml","campari"]], method:"Buzla karıştır, coupe'a süz.", garnish:["Limon kabuğu","peel"], glass:"coupe", color:"#b33a28", src:KL, strong:true, pri:2},
+ {id:"vieuxcarre", name:"Vieux Carré", taste:"güçlü, baharatlı, yuvarlak", req:["ryeG","cognac","rosso","benedictine"], lines:[["22,5 ml","ryeG"],["22,5 ml","cognac"],["22,5 ml","rosso"],["7,5 ml","benedictine"]], opt:[["1 dash","bitters"],["1 dash","peychaud"]], method:"Buzla karıştır, büyük buzlu rocks bardağına süz.", garnish:["Limon kabuğu","peel"], glass:"rocks", color:"#8f3d1a", src:iba("vieux-carre"), strong:true, pri:2},
+ {id:"sazerac", name:"Sazerac", taste:"anasonlu, güçlü", req:["ryeG","sweet","peychaud"], lines:[["50 ml","ryeG"],["7,5 ml","sweet"],["3 dash","peychaud"]], opt:[["Bardak çalkası","absinthe"]], method:"Buzsuz bardağı absentle çalkalayıp fazlasını dök. Diğerlerini ayrı bir bardakta buzla karıştırıp bu bardağa süz.", garnish:["Limon kabuğu (sıkıp at)","peel"], glass:"rocks", color:"#a4471c", src:iba("sazerac"), strong:true, pri:2},
+ {id:"mintjulep", name:"Mint Julep", taste:"naneli, buz gibi, güçlü", req:["bourbon","sweet","mint"], lines:[["60 ml","bourbon"],["10 ml","sweet"],["8 yaprak","mint"]], method:"Naneyi şurupla bardakta hafifçe ez, burbonu ekle, kırık buzla tepeleme doldurup karıştır.", garnish:["Bol nane","mint"], glass:"rocks", color:"#d9b45a", src:iba("mint-julep"), pri:2},
+ {id:"paperplane", name:"Paper Plane", taste:"acı-tatlı, narenciyeli", req:["bourbon","aperol","amaro","lemon"], lines:[["22,5 ml","bourbon"],["22,5 ml","aperol"],["22,5 ml","amaro"],["22,5 ml","lemon"]], method:"Buzla çalkala, coupe'a süz.", garnish:["—","none"], glass:"coupe", color:"#e07a2e", src:iba("paper-plane"), pri:3},
+ {id:"goldrush", name:"Gold Rush", taste:"ballı, ekşi, güçlü", req:["bourbon","lemon","honey"], lines:[["60 ml","bourbon"],["22,5 ml","lemon"],["22,5 ml","honey"]], method:"Buzla çalkala, büyük buzlu rocks'a süz.", garnish:["Limon kabuğu","peel"], glass:"rocks", color:"#e2a83e", src:KL, pri:2},
+ {id:"brownderby", name:"Brown Derby", taste:"greyfurtlu, ballı", req:["bourbon","gfjuice","honey"], lines:[["45 ml","bourbon"],["30 ml","gfjuice"],["15 ml","honey"]], method:"Buzla çalkala, coupe'a süz.", garnish:["Greyfurt kabuğu","peel"], glass:"coupe", color:"#e9a64a", src:KL, pri:2},
+ {id:"wardeight", name:"Ward Eight", taste:"meyveli, ekşi", req:["ryeG","lemon","oj","grenadine"], lines:[["60 ml","ryeG"],["15 ml","lemon"],["15 ml","oj"],["10 ml","grenadine"]], method:"Buzla çalkala, coupe'a süz.", garnish:["Kiraz","cherry"], glass:"coupe", color:"#d0612c", src:KL, pri:2},
+ {id:"rememberthemaine", name:"Remember the Maine", taste:"kirazlı, anasonlu", req:["ryeG","rosso","cherrybr","absinthe"], lines:[["60 ml","ryeG"],["22,5 ml","rosso"],["15 ml","cherrybr"],["7,5 ml (çalkalama)","absinthe"]], method:"Coupe'u absentle çalkala, fazlasını dök. Diğerlerini buzla karıştırıp süz.", garnish:["Limon kabuğu","peel"], glass:"coupe", color:"#7a2416", src:iba("remember-the-maine"), strong:true, pri:2},
+ {id:"irishcoffee", name:"Irish Coffee", taste:"sıcak, kahveli, kremalı", req:["irish","coffee","sweet","creamG"], lines:[["50 ml","irish"],["120 ml (sıcak)","coffee"],["1 tatlı kaşığı","sweet"],["30 ml (hafif çırpılmış)","creamG"]], method:"Isıtılmış bardakta şekeri sıcak kahvede erit, viskiyi ekle, hafif çırpılmış kremayı kaşığın sırtından üste yatır.", garnish:["Krema katmanı","none"], glass:"mug", color:"#2a170c", top:{c:"#efe2cb",h:22}, src:iba("irish-coffee"), pri:3},
+ {id:"whiskycoffee", name:"Whisky Coffee", taste:"sıcak, kahveli", req:["whisky","coffee","sweet"], lines:[["50 ml","whisky"],["120 ml (sıcak)","coffee"],["1 tatlı kaşığı","sweet"]], opt:[["30 ml","creamG"]], method:"Isıtılmış bardakta şekeri sıcak kahvede erit, viskiyi ekle. Krema varsa hafif çırpıp üste yatır.", garnish:["Krema katmanı","none"], glass:"mug", color:"#2a170c", top:{c:"#efe2cb",h:20,need:"creamG"}, src:{t:"uyarlama", url:"https://iba-world.com/iba-cocktail/irish-coffee/", orig:"Irish Coffee"}, info:"Irish Coffee kalıbı; İrlanda viskisi yerine elindeki viski.", pri:1},
+ {id:"tipperary", name:"Tipperary", taste:"bitkisel, güçlü", req:["irish","rosso","chartg"], lines:[["50 ml","irish"],["25 ml","rosso"],["15 ml","chartg"]], opt:[["2 dash","bitters"]], method:"Buzla karıştır, martini kadehine süz.", garnish:["Portakal kabuğu","peel"], glass:"martini", color:"#7d4a1a", src:iba("tipperary"), strong:true, pri:2},
+ {id:"japhb", name:"Japon Highball", taste:"çok ferah, zarif", req:["japanese","soda"], lines:[["45 ml","japanese"],["135 ml (çok soğuk)","soda"]], method:"Bardağı buzla doldurup soğut, suyu dök. Viskiyi koy, 13 tur karıştır, sodayı kaşık boyunca yavaşça ekle, bir tur daha karıştır.", garnish:["Limon kabuğu","peel"], glass:"highball", color:"#e8c98a", fizzy:true, src:KL, pri:2},
+ {id:"mizuwari", name:"Mizuwari", taste:"yumuşak, sulandırılmış", req:["japanese"], lines:[["45 ml","japanese"],["90 ml","su (soğuk)"]], method:"Buzlu uzun bardakta viski ve soğuk suyu 13,5 tur karıştır (Japon usulü).", garnish:["—","none"], glass:"highball", color:"#e3c27f", src:KL, pri:1},
+ {id:"godfather", name:"Godfather", taste:"bademli, isli", req:["whisky","amaretto"], lines:[["35 ml","whisky"],["35 ml","amaretto"]], method:"Buzlu rocks bardağında karıştır.", garnish:["—","none"], glass:"rocks", color:"#8c4b14", src:KL, strong:true, pri:2},
+ {id:"presbyterian", name:"Presbyterian", taste:"zencefilli, ferah", req:["whisky","ginger","soda"], lines:[["50 ml","whisky"],["60 ml","ginger"],["60 ml","soda"]], method:"Buzlu highball'da build et.", garnish:["Limon kabuğu","peel"], glass:"highball", color:"#e2bb6e", fizzy:true, src:KL, pri:1},
+ {id:"whiskyhb", name:"Whisky Highball", taste:"ferah, hafif", req:["whisky","hb"], lines:[["45 ml","whisky"],["120 ml","hb"]], method:"Highball'ı buzla doldur, viskiyi koy, gazlıyı yavaşça ekle, bir kez karıştır.", garnish:["Limon kabuğu","peel"], glass:"highball", color:"#e2b866", fizzy:true, src:KL, pri:1},
+ {id:"whiskycola", name:"Whisky Cola", taste:"tatlı, kolay", req:["whisky","cola"], lines:[["50 ml","whisky"],["120 ml","cola"]], opt:[["1 dilim","lime"]], method:"Buzlu highball'da build et.", garnish:["Misket limonu","lime"], glass:"highball", color:"#3d1c0c", fizzy:true, src:KL, pri:0},
+ {id:"blackbrew", name:"Black & Brew Highball", taste:"kahveli, köpüklü", req:["whisky","coffee","cola"], lines:[["40 ml","whisky"],["40 ml","coffee"],["100 ml","cola"]], opt:[["Bir sıkım","soda"]], method:"Buzlu highball'a viski ve soğuk kahveyi koy, kolayı yavaşça ekle, bir kez karıştır. Kahve mutlaka soğuk olsun.", garnish:["—","none"], glass:"highball", color:"#2e170a", fizzy:true, src:DOGA, pri:2},
+ {id:"hottoddy", name:"Hot Toddy", taste:"sıcak, ballı", req:["whisky","honey","lemon"], lines:[["45 ml","whisky"],["15 ml","honey"],["15 ml","lemon"],["120 ml","su (sıcak)"]], opt:[["1 adet","cinnamon"],["3 adet","clove"]], method:"Isıtılmış kupada bal ve limonu sıcak suyla erit, viskiyi ekle.", garnish:["Limon dilimi","lemon"], glass:"mug", color:"#d79a3d", src:KL, pri:2},
+ // --- Cin
+ {id:"negroni", name:"Negroni", taste:"acı-tatlı, aperatif", req:["ginG","rosso","campari"], lines:[["30 ml","ginG"],["30 ml","rosso"],["30 ml","campari"]], method:"Buzla dolu rocks bardağında 20–30 saniye karıştır.", garnish:["Portakal dilimi","orange"], glass:"rocks", color:"#b3261e", src:iba("negroni"), pri:3},
+ {id:"gintonic", name:"Gin & Tonic", taste:"ferah, kuru, otsu", req:["ginG","tonic"], lines:[["50 ml","ginG"],["150 ml","tonic"]], opt:[["2 dilim","cucumber"],["1 dal","rosemary"],["1 dal","thyme"]], method:"Highball'ı buzla doldur, cini koy, toniği yavaşça ekle.", garnish:["Limon veya salatalık","lemon"], glass:"highball", color:"#e7f1ee", fizzy:true, src:KL, pri:1},
+ {id:"collins", name:"Tom Collins", taste:"ekşi-ferah, uzun", req:["ginG","sour","sweet","soda"], lines:[["45 ml","ginG"],["30 ml","sourL"],["15 ml","sweet"],["60 ml","soda"]], method:"Cin, limon ve şurubu buzla çalkala, buzlu highball'a süz, sodayla tamamla.", garnish:["Limon dilimi","lemon"], glass:"highball", color:"#f1eccb", fizzy:true, src:iba("john-collins"), pri:2},
+ {id:"martini", name:"Dry Martini", taste:"çok kuru, güçlü", req:["ginG","dry"], lines:[["60 ml","ginG"],["10 ml","dry"]], opt:[["1 dash","obitters"]], method:"Buzla 30 saniye karıştır, soğutulmuş martini kadehine süz.", garnish:["Zeytin veya limon kabuğu","olive"], glass:"martini", color:"#eef2e3", src:iba("dry-martini"), strong:true, pri:2},
+ {id:"gimlet", name:"Gimlet", taste:"ekşi, keskin", req:["ginG","sour","sweet"], lines:[["60 ml","ginG"],["20 ml","sour"],["15 ml","sweet"]], method:"Buzla sertçe çalkala, soğuk coupe'a süz.", garnish:["Misket limonu","lime"], glass:"coupe", color:"#dcecab", src:KL, pri:2},
+ {id:"beesknees", name:"Bee's Knees", taste:"ballı, ekşi", req:["ginG","lemon","honey"], lines:[["50 ml","ginG"],["20 ml","lemon"],["20 ml","honey"]], method:"Buzla çalkala, coupe'a süz.", garnish:["Limon kabuğu","peel"], glass:"coupe", color:"#f0d27a", src:iba("bees-knees"), pri:2},
+ {id:"aviation", name:"Aviation", taste:"çiçeksi, ekşi", req:["ginG","maraschino","violette","lemon"], lines:[["45 ml","ginG"],["15 ml","maraschino"],["7,5 ml","violette"],["15 ml","lemon"]], method:"Buzla çalkala, coupe'a süz.", garnish:["Kiraz","cherry"], glass:"coupe", color:"#c9c3e6", src:iba("aviation"), pri:3},
+ {id:"lastword", name:"Last Word", taste:"bitkisel, keskin", req:["ginG","chartg","maraschino","lime"], lines:[["22,5 ml","ginG"],["22,5 ml","chartg"],["22,5 ml","maraschino"],["22,5 ml","lime"]], method:"Buzla çalkala, coupe'a süz.", garnish:["—","none"], glass:"coupe", color:"#c9dd8a", src:iba("last-word"), pri:3},
+ {id:"bramble", name:"Bramble", taste:"böğürtlenli, ekşi", req:["ginG","lemon","sweet","mure"], lines:[["50 ml","ginG"],["25 ml","lemon"],["12,5 ml","sweet"],["15 ml (üste)","mure"]], method:"Cin, limon ve şurubu kırık buzlu rocks bardağında karıştır, likörü üstten gezdir.", garnish:["Böğürtlen, limon","berry"], glass:"rocks", color:"#e9dfc0", top:{c:"#5b1030",h:18}, src:iba("bramble"), pri:3},
+ {id:"cloverclub", name:"Clover Club", taste:"ahududulu, köpüklü", req:["ginG","rasp","lemon"], lines:[["45 ml","ginG"],["15 ml","rasp"],["15 ml","lemon"]], opt:[["1 adet","egg"]], method:"Önce buzsuz, sonra buzla çalkala; coupe'a süz.", garnish:["Ahududu","berry"], glass:"coupe", color:"#e25a7a", top:{c:"#f7dde4",h:8,need:"egg"}, src:iba("clover-club"), pri:3},
+ {id:"southside", name:"South Side", taste:"naneli, ekşi", req:["ginG","sour","sweet","mint"], lines:[["60 ml","ginG"],["25 ml","sour"],["15 ml","sweet"],["6 yaprak","mint"]], method:"Buzla çalkala, coupe'a çift süz.", garnish:["Nane yaprağı","mint"], glass:"coupe", color:"#d6ecb0", src:iba("south-side"), pri:2},
+ {id:"french75", name:"French 75", taste:"köpüklü, limonlu", req:["ginG","lemon","sweet","prosecco"], lines:[["30 ml","ginG"],["15 ml","lemon"],["15 ml","sweet"],["60 ml","prosecco"]], method:"Cin, limon, şurubu buzla çalkala, flüte süz, köpüklüyle tamamla.", garnish:["Limon kabuğu","peel"], glass:"flute", color:"#f3eab8", fizzy:true, src:iba("french-75"), pri:3},
+ {id:"corpse2", name:"Corpse Reviver #2", taste:"narenciyeli, keskin", req:["ginG","triple","lillet","lemon"], lines:[["22,5 ml","ginG"],["22,5 ml","triple"],["22,5 ml","lillet"],["22,5 ml","lemon"]], opt:[["Bardak çalkası","absinthe"]], method:"Coupe'u absentle çalkala. Diğerlerini buzla çalkalayıp süz.", garnish:["Portakal kabuğu","peel"], glass:"coupe", color:"#efe6b0", src:iba("corpse-reviver-2"), pri:3},
+ {id:"martinez", name:"Martinez", taste:"tatlı, aromatik", req:["oldG","rosso","maraschino"], lines:[["45 ml","oldG"],["45 ml","rosso"],["5 ml","maraschino"]], opt:[["2 dash","bittersG"]], method:"Buzla karıştır, coupe'a süz.", garnish:["Limon kabuğu","peel"], glass:"coupe", color:"#8a3218", src:iba("martinez"), strong:true, pri:2},
+ {id:"singsling", name:"Singapore Sling", taste:"tropikal, kirazlı", req:["ginG","cherrybr","triple","benedictine","pine","lime","grenadine"], lines:[["30 ml","ginG"],["15 ml","cherrybr"],["7,5 ml","triple"],["7,5 ml","benedictine"],["120 ml","pine"],["15 ml","lime"],["10 ml","grenadine"]], opt:[["1 dash","bitters"]], method:"Buzla çalkala, buzlu highball'a süz.", garnish:["Ananas, kiraz","pine"], glass:"highball", color:"#e86a6a", src:iba("singapore-sling"), pri:3},
+ {id:"hankypanky", name:"Hanky Panky", taste:"acı-tatlı, bitkisel", req:["ginG","rosso","fernet"], lines:[["45 ml","ginG"],["45 ml","rosso"],["7,5 ml","fernet"]], method:"Buzla karıştır, coupe'a süz.", garnish:["Portakal kabuğu","peel"], glass:"coupe", color:"#6a2414", src:iba("hanky-panky"), strong:true, pri:2},
+ {id:"basilsmash", name:"Gin Basil Smash", taste:"otsu, ekşi, yeşil", req:["ginG","lemon","sweet","basil"], lines:[["60 ml","ginG"],["20 ml","lemon"],["15 ml","sweet"],["Bir avuç","basil"]], method:"Fesleğeni shaker'da limonla ez, diğerlerini ekleyip buzla çalkala, buzlu rocks'a çift süz.", garnish:["Fesleğen dalı","mint"], glass:"rocks", color:"#b8db7a", src:iba("gin-basil-smash"), pri:3},
+ {id:"vesper", name:"Vesper", taste:"çok güçlü, kuru", req:["ginG","vodkaG","lillet"], lines:[["45 ml","ginG"],["15 ml","vodkaG"],["7,5 ml","lillet"]], method:"Buzla karıştır (ya da çalkala), martini kadehine süz.", garnish:["Limon kabuğu","peel"], glass:"martini", color:"#efeacb", src:iba("vesper"), strong:true, pri:2},
+ {id:"whitelady", name:"White Lady", taste:"narenciyeli, zarif", req:["ginG","triple","lemon"], lines:[["40 ml","ginG"],["30 ml","triple"],["20 ml","lemon"]], opt:[["1 adet","egg"]], method:"Buzla çalkala, coupe'a süz.", garnish:["Limon kabuğu","peel"], glass:"coupe", color:"#f2eccf", top:{c:"#fbf6ea",h:7,need:"egg"}, src:iba("white-lady"), pri:2},
+ {id:"monkeygland", name:"Monkey Gland", taste:"meyveli, anasonlu", req:["ginG","oj","grenadine"], lines:[["45 ml","ginG"],["45 ml","oj"],["1 yemek kaşığı","grenadine"]], opt:[["1 yemek kaşığı","absinthe"]], method:"Buzla çalkala, coupe'a süz.", garnish:["Portakal kabuğu","peel"], glass:"coupe", color:"#f08a3a", src:iba("monkey-gland"), pri:2},
+ {id:"paradise", name:"Paradise", taste:"meyveli, kayısılı", req:["ginG","apricot","oj"], lines:[["30 ml","ginG"],["20 ml","apricot"],["15 ml","oj"]], method:"Buzla çalkala, coupe'a süz.", garnish:["Portakal kabuğu","peel"], glass:"coupe", color:"#f3a43a", src:iba("paradise"), pri:2},
+ {id:"angelface", name:"Angel Face", taste:"meyveli, güçlü", req:["ginG","apricot","calvados"], lines:[["30 ml","ginG"],["30 ml","apricot"],["30 ml","calvados"]], method:"Buzla çalkala, coupe'a süz.", garnish:["—","none"], glass:"coupe", color:"#e1a04a", src:iba("angel-face"), strong:true, pri:2},
+ {id:"ginfizz", name:"Gin Fizz", taste:"ekşi, köpüklü", req:["ginG","lemon","sweet","soda"], lines:[["45 ml","ginG"],["30 ml","lemon"],["15 ml","sweet"],["Tamamla","soda"]], opt:[["1 adet (Silver Fizz)","egg"]], method:"Soda dışındakileri buzla çalkala, buzsuz highball'a süz, sodayla tamamla.", garnish:["Limon dilimi","lemon"], glass:"highball", color:"#f4f0d6", fizzy:true, src:iba("gin-fizz"), pri:2},
+ {id:"cardinale", name:"Cardinale", taste:"kuru, acımsı", req:["ginG","dry","campari"], lines:[["40 ml","ginG"],["20 ml","dry"],["10 ml","campari"]], method:"Buzla karıştır, coupe'a süz.", garnish:["Limon kabuğu","peel"], glass:"coupe", color:"#d23a2c", src:iba("cardinale"), strong:true, pri:2},
+ {id:"bronx", name:"Bronx", taste:"meyveli, vermutlu", req:["ginG","rosso","dry","oj"], lines:[["30 ml","ginG"],["15 ml","rosso"],["15 ml","dry"],["30 ml","oj"]], method:"Buzla çalkala, coupe'a süz.", garnish:["Portakal dilimi","orange"], glass:"coupe", color:"#e88a3a", src:KL, pri:2},
+ {id:"bijou", name:"Bijou", taste:"bitkisel, tatlı, güçlü", req:["ginG","rosso","chartg"], lines:[["30 ml","ginG"],["30 ml","rosso"],["30 ml","chartg"]], opt:[["1 dash","obitters"]], method:"Buzla karıştır, coupe'a süz.", garnish:["Kiraz","cherry"], glass:"coupe", color:"#a65a1a", src:KL, strong:true, pri:2},
+ {id:"pinkgin", name:"Pink Gin", taste:"kuru, aromatik", req:["ginG","bitters"], lines:[["60 ml","ginG"],["4 dash","bitters"]], method:"Buzla karıştır, soğuk coupe'a süz.", garnish:["Limon kabuğu","peel"], glass:"coupe", color:"#eab8a8", src:KL, strong:true, pri:1},
+ {id:"sloefizz", name:"Sloe Gin Fizz", taste:"erik gibi, ekşi, köpüklü", req:["sloe","lemon","sweet","soda"], lines:[["45 ml","sloe"],["25 ml","lemon"],["10 ml","sweet"],["Tamamla","soda"]], method:"Soda dışındakileri buzla çalkala, highball'a süz, sodayla tamamla.", garnish:["Limon dilimi","lemon"], glass:"highball", color:"#b0304a", fizzy:true, src:KL, pri:2},
+ {id:"pimmscup", name:"Pimm's Cup", taste:"meyveli, yazlık", req:["pimms","sprite"], lines:[["50 ml","pimms"],["150 ml","sprite"]], opt:[["3 dilim","cucumber"],["2 adet","strawberry"],["1 dal","mint"]], method:"Buzlu highball'da meyvelerle birlikte build et.", garnish:["Salatalık, çilek, nane","cucumber"], glass:"highball", color:"#9b4a22", fizzy:true, src:KL, pri:2},
+ {id:"hugo", name:"Hugo", taste:"çiçeksi, naneli, köpüklü", req:["elder","prosecco","mint"], lines:[["20 ml","elder"],["120 ml","prosecco"],["Bir sıkım","soda"],["6 yaprak","mint"]], opt:[["2 dilim","lime"]], method:"Naneyi kadehte hafifçe bastır, buz, şurup/likör ve köpüklüyü ekle, sodayla bitir.", garnish:["Nane, misket limonu","mint"], glass:"wine", color:"#eef0cf", fizzy:true, src:KL, pri:2},
+ {id:"coolgin", name:"Cool Lime Gin", taste:"naneli, kuru", req:["ginG","coollime"], lines:[["45 ml","ginG"],["120 ml","coollime"]], opt:[["Tamamla","soda"]], method:"Buzlu highball'da build et.", garnish:["Nane","mint"], glass:"highball", color:"#e2efc5", fizzy:true, src:DOGA, pri:1},
+ {id:"saketini", name:"Saketini", taste:"kuru, zarif", req:["ginG","sake"], lines:[["60 ml","ginG"],["15 ml","sake"]], method:"Buzla karıştır, martini kadehine süz.", garnish:["Salatalık","cucumber"], glass:"martini", color:"#f2f4ec", src:KL, strong:true, pri:1},
+ // --- Votka
+ {id:"mule", name:"Moscow Mule", taste:"zencefilli, ferah", req:["vodkaG","ginger","sour"], lines:[["45 ml","vodkaG"],["15 ml","sour"],["120 ml","ginger"]], method:"Buzlu kupaya votka ve narenciyeyi koy, ginger ile tamamla.", garnish:["Misket limonu dilimi","lime"], glass:"copper", color:"#efe0b2", fizzy:true, src:iba("moscow-mule"), pri:2},
+ {id:"applemule", name:"Apple Mule", taste:"elmalı, zencefilli", req:["vodkaG","applej","ginger","sour"], lines:[["45 ml","vodkaG"],["45 ml","applej"],["10 ml","sour"],["90 ml","ginger"]], method:"Buzlu kupada build et.", garnish:["Elma dilimi","lime"], glass:"copper", color:"#ead9a0", fizzy:true, src:YAY, pri:1},
+ {id:"cosmo", name:"Cosmopolitan", taste:"mayhoş, zarif", req:["vodkaG","triple","lime","redj"], lines:[["40 ml","vodkaG"],["15 ml","triple"],["15 ml","lime"],["30 ml","redj"]], method:"Buzla çalkala, soğuk martini kadehine süz.", garnish:["Portakal kabuğu","peel"], glass:"martini", color:"#e04a6a", src:iba("cosmopolitan"), pri:3},
+ {id:"kamikaze", name:"Kamikaze", taste:"ekşi, keskin", req:["vodkaG","triple","lime"], lines:[["30 ml","vodkaG"],["30 ml","triple"],["30 ml","lime"]], method:"Buzla çalkala, coupe'a süz.", garnish:["Misket limonu","lime"], glass:"coupe", color:"#e8efb8", src:KL, pri:1},
+ {id:"lemondrop", name:"Lemon Drop Martini", taste:"limonlu, şekerli", req:["vodkaG","triple","lemon","sweet"], lines:[["45 ml","vodkaG"],["20 ml","triple"],["25 ml","lemon"],["15 ml","sweet"]], method:"Kenarı şekerlenmiş kadehe, buzla çalkalayıp süz.", garnish:["Limon dilimi","lemon"], glass:"martini", color:"#f3eda0", src:iba("lemon-drop-martini"), pri:2},
+ {id:"sexbeach", name:"Sex on the Beach", taste:"meyveli, tatlı", req:["vodkaG","peach","oj","redj"], lines:[["40 ml","vodkaG"],["20 ml","peach"],["40 ml","oj"],["40 ml","redj"]], method:"Buzlu highball'da karıştır.", garnish:["Portakal dilimi","orange"], glass:"highball", color:"#f0773a", src:iba("sex-on-the-beach"), pri:2},
+ {id:"harvey", name:"Harvey Wallbanger", taste:"portakallı, vanilyalı", req:["vodkaG","oj","galliano"], lines:[["45 ml","vodkaG"],["90 ml","oj"],["15 ml (üste)","galliano"]], method:"Votka ve portakal suyunu buzlu highball'da karıştır, Galliano'yu üste gezdir.", garnish:["Portakal dilimi","orange"], glass:"highball", color:"#f6a828", src:KL, pri:2},
+ {id:"pornstar", name:"Porn Star Martini", taste:"tropikal, vanilyalı", req:["vodkaG","passoa","passion","lime","vanillas"], lines:[["40 ml","vodkaG"],["15 ml","passoa"],["30 ml","passion"],["15 ml","lime"],["15 ml","vanillas"]], opt:[["60 ml (yanında shot)","prosecco"]], method:"Buzla çalkala, coupe'a süz. Köpüklü varsa yanında ayrı bir kadehte ver.", garnish:["Yarım çarkıfelek","none"], glass:"coupe", color:"#f2b23a", src:iba("porn-star-martini"), pri:3},
+ {id:"screwdriver", name:"Screwdriver", taste:"meyveli, basit", req:["vodkaG","oj"], lines:[["50 ml","vodkaG"],["100 ml","oj"]], method:"Buzlu highball'da karıştır.", garnish:["Portakal dilimi","orange"], glass:"highball", color:"#f6a31d", src:KL, pri:0},
+ {id:"blackrussian", name:"Black Russian", taste:"kahveli, tatlı, güçlü", req:["vodkaG","kahlua"], lines:[["50 ml","vodkaG"],["20 ml","kahlua"]], method:"Buzlu rocks bardağında karıştır.", garnish:["—","none"], glass:"rocks", color:"#2a170c", src:iba("black-russian"), pri:1},
+ {id:"whiterussian", name:"White Russian", taste:"kremalı, kahveli", req:["vodkaG","kahlua","creamG"], lines:[["50 ml","vodkaG"],["20 ml","kahlua"],["30 ml","creamG"]], method:"Votka ve likörü buzlu bardakta karıştır, kremayı kaşığın sırtından üste yatır.", garnish:["—","none"], glass:"rocks", color:"#3a2112", top:{c:"#efe3cf",h:22}, src:KL, pri:2},
+ {id:"espresso", name:"Espresso Martini", taste:"kahveli, kadifemsi", req:["vodkaG","coffee","kahlua"], lines:[["50 ml","vodkaG"],["30 ml","coffee"],["20 ml","kahlua"]], opt:[["10 ml","sugar"]], method:"Bol buzla çok sert 15 saniye çalkala ki köpük yapsın, soğuk coupe'a süz.", garnish:["3 kahve çekirdeği","beans"], glass:"coupe", color:"#3a2213", top:{c:"#c99a6b",h:7}, src:iba("espresso-martini"), pri:3},
+ {id:"mudslide", name:"Mudslide", taste:"kremalı, tatlı", req:["vodkaG","kahlua","baileys"], lines:[["30 ml","vodkaG"],["30 ml","kahlua"],["30 ml","baileys"]], method:"Buzla çalkala, buzlu rocks bardağına süz.", garnish:["—","none"], glass:"rocks", color:"#7a4e30", src:KL, pri:2},
+ {id:"capecod", name:"Cape Codder", taste:"meyveli, mayhoş", req:["vodkaG","redj"], lines:[["45 ml","vodkaG"],["120 ml","redj"]], method:"Buzlu highball'da karıştır.", garnish:["Misket limonu","lime"], glass:"highball", color:"#a3172d", src:KL, pri:1},
+ {id:"seabreeze", name:"Sea Breeze", taste:"mayhoş, ferah", req:["vodkaG","cran","gfjuice"], lines:[["40 ml","vodkaG"],["120 ml","cran"],["30 ml","gfjuice"]], method:"Buzlu highball'da karıştır.", garnish:["Misket limonu","lime"], glass:"highball", color:"#e2566a", src:iba("sea-breeze"), pri:2},
+ {id:"baybreeze", name:"Bay Breeze", taste:"tropikal, mayhoş", req:["vodkaG","cran","pine"], lines:[["45 ml","vodkaG"],["90 ml","cran"],["30 ml","pine"]], method:"Buzlu highball'da karıştır.", garnish:["Ananas","pine"], glass:"highball", color:"#e86a7a", src:KL, pri:1},
+ {id:"woowoo", name:"Woo Woo", taste:"şeftalili, mayhoş", req:["vodkaG","peach","cran"], lines:[["40 ml","vodkaG"],["20 ml","peach"],["120 ml","cran"]], method:"Buzlu highball'da karıştır.", garnish:["Misket limonu","lime"], glass:"highball", color:"#e04a5a", src:KL, pri:1},
+ {id:"saltydog", name:"Salty Dog", taste:"tuzlu, greyfurtlu", req:["vodkaG","gfjuice","salt"], lines:[["45 ml","vodkaG"],["120 ml","gfjuice"],["Kenar için","salt"]], method:"Bardağın kenarını tuzla, buzlu bardakta karıştır.", garnish:["—","none"], glass:"highball", color:"#f2c6a8", src:KL, info:"Tuzsuz haline Greyhound denir.", pri:1},
+ {id:"appletini", name:"Appletini", taste:"ekşi elma", req:["vodkaG","applel","lime"], lines:[["45 ml","vodkaG"],["20 ml","applel"],["15 ml","lime"]], method:"Buzla çalkala, martini kadehine süz.", garnish:["Elma dilimi","lime"], glass:"martini", color:"#c8e86a", src:KL, pri:1},
+ {id:"frenchmartini", name:"French Martini", taste:"ahududulu, kadifemsi", req:["vodkaG","chambord","pine"], lines:[["45 ml","vodkaG"],["15 ml","chambord"],["15 ml","pine"]], method:"Buzla sertçe çalkala, martini kadehine süz.", garnish:["Limon kabuğu","peel"], glass:"martini", color:"#c2385a", top:{c:"#f2c2cc",h:6}, src:iba("french-martini"), pri:2},
+ {id:"bluelagoon", name:"Blue Lagoon", taste:"tatlı, limonlu, mavi", req:["vodkaG","curacao","sprite"], lines:[["40 ml","vodkaG"],["20 ml","curacao"],["Tamamla","sprite"]], method:"Buzlu highball'da build et.", garnish:["Limon dilimi","lemon"], glass:"highball", color:"#3aa6e0", fizzy:true, src:KL, pri:1},
+ {id:"rsp", name:"Russian Spring Punch", taste:"meyveli, köpüklü", req:["vodkaG","lemon","cassis","sweet","prosecco"], lines:[["25 ml","vodkaG"],["25 ml","lemon"],["15 ml","cassis"],["10 ml","sweet"],["Tamamla","prosecco"]], method:"Köpüklü dışındakileri buzla çalkala, buzlu uzun bardağa süz, köpüklüyle tamamla.", garnish:["Böğürtlen","berry"], glass:"highball", color:"#a8325a", fizzy:true, src:iba("russian-spring-punch"), pri:2},
+ {id:"vodkatonic", name:"Vodka Tonic", taste:"kuru, ferah", req:["vodkaG","tonic"], lines:[["50 ml","vodkaG"],["150 ml","tonic"]], method:"Buzlu highball'da build et.", garnish:["Limon dilimi","lemon"], glass:"highball", color:"#eef3f2", fizzy:true, src:KL, pri:0},
+ {id:"vodkaenergy", name:"Vodka Enerji", taste:"tatlı, gazlı", req:["vodkaG","energy"], lines:[["40 ml","vodkaG"],["150 ml","energy"]], method:"Buzlu highball'da build et.", garnish:["—","none"], glass:"highball", color:"#e9d36a", fizzy:true, src:KL, info:"Kafein alkolün etkisini maskeler; ne kadar içtiğini fark etmeyi zorlaştırır.", pri:0},
+ {id:"caipiroska", name:"Caipiroska", taste:"ekşi, şekerli, ferah", req:["vodkaG","lime","sugar"], lines:[["50 ml","vodkaG"],["½ adet, dilimlenmiş","lime"],["2 tatlı kaşığı","sugar"]], method:"Misket limonunu şekerle bardakta ez, kırık buz ve votkayı ekleyip karıştır.", garnish:["Misket limonu","lime"], glass:"rocks", color:"#e4efc2", src:KL, pri:2},
+ {id:"bloody", name:"Bloody Mary", taste:"tuzlu, baharatlı", req:["vodkaG","tomato","lemon"], lines:[["45 ml","vodkaG"],["90 ml","tomato"],["15 ml","lemon"]], opt:[["1 tutam","salt"],["1 tutam","pepper"],["2 damla","tabasco"],["2 dash","worcester"]], method:"Malzemeleri buzla iki bardak arasında birkaç kez aktararak karıştır (sallamadan), highball'a al.", garnish:["Limon dilimi","lemon"], glass:"highball", color:"#b42820", src:iba("bloody-mary"), pri:2},
+ {id:"salgammary", name:"Şalgam Mary", taste:"ekşi-tuzlu, baharatlı", req:["vodkaG","salgam","lemon"], lines:[["45 ml","vodkaG"],["120 ml","salgam"],["10 ml","lemon"]], opt:[["1 tutam","pepper"],["1 dilim","chili"]], method:"Buzlu highball'da karıştır. Acılı şalgamla daha iyi olur.", garnish:["Limon dilimi","lemon"], glass:"highball", color:"#7a1238", src:{t:"doga"}, info:"Bloody Mary kalıbına Adana usulü bir dokunuş.", pri:2},
+ // --- Rom & cachaça
+ {id:"mojito", name:"Mojito", taste:"naneli, ferah", req:["wrum","lime","sweet","mint","soda"], lines:[["45 ml","wrum"],["20 ml","lime"],["20 ml","sweet"],["6–8 yaprak","mint"],["Tamamla","soda"]], method:"Naneyi şurup ve limonla hafifçe ez (parçalama), buz ve romu ekle, sodayla tamamla.", garnish:["Nane dalı","mint"], glass:"highball", color:"#e5f2cf", fizzy:true, src:iba("mojito"), pri:3},
+ {id:"daiquiri", name:"Daiquiri", taste:"ekşi, temiz", req:["wrum","sour","sweet"], lines:[["60 ml","wrum"],["25 ml","sour"],["15 ml","sweet"]], method:"Buzla sertçe çalkala, soğuk coupe'a süz.", garnish:["Misket limonu","lime"], glass:"coupe", color:"#f0efc9", src:iba("daiquiri"), pri:2},
+ {id:"strawdaiq", name:"Çilekli Daiquiri", taste:"meyveli, ekşi", req:["wrum","strawberry","lime","sweet"], lines:[["50 ml","wrum"],["4 adet","strawberry"],["25 ml","lime"],["15 ml","sweet"]], method:"Çilekleri shaker'da ez, buzla çalkala, coupe'a çift süz (ya da kırık buzla blender).", garnish:["Çilek","berry"], glass:"coupe", color:"#e2384a", src:KL, pri:2},
+ {id:"hemdaiq", name:"Hemingway Special", taste:"greyfurtlu, kuru", req:["wrum","maraschino","lime","gfjuice"], lines:[["60 ml","wrum"],["15 ml","maraschino"],["15 ml","lime"],["40 ml","gfjuice"]], method:"Buzla çalkala, coupe'a süz.", garnish:["Misket limonu","lime"], glass:"coupe", color:"#efe0b0", src:iba("hemingway-special"), pri:2},
+ {id:"pinacolada", name:"Piña Colada", taste:"tropikal, kremalı", req:["wrum","coconutc","pine"], lines:[["50 ml","wrum"],["30 ml","coconutc"],["50 ml","pine"]], method:"Kırık buzla blender'da çek ya da bol buzla çalkala, uzun bardağa al.", garnish:["Ananas, kiraz","pine"], glass:"highball", color:"#f7f0d8", src:iba("pina-colada"), pri:3},
+ {id:"maitai", name:"Mai Tai", taste:"bademli, tropikal", req:["wrum","drum","triple","orgeat","lime"], lines:[["30 ml","wrum"],["30 ml","drum"],["15 ml","triple"],["15 ml","orgeat"],["25 ml","lime"]], method:"Buzla çalkala, kırık buzlu rocks bardağına al.", garnish:["Nane dalı, misket limonu","mint"], glass:"rocks", color:"#e0a04a", src:iba("mai-tai"), pri:3},
+ {id:"planters", name:"Planter's Punch", taste:"meyveli, baharatlı", req:["drumG","tropj","lemon","grenadine"], lines:[["45 ml","drumG"],["35 ml","tropj"],["20 ml","lemon"],["10 ml","grenadine"],["10 ml","sugar"]], opt:[["3 dash","bitters"]], method:"Buzla çalkala, buzlu highball'a süz.", garnish:["Portakal dilimi","orange"], glass:"highball", color:"#e8692c", src:iba("planters-punch"), pri:2},
+ {id:"hurricane", name:"Hurricane", taste:"tropikal, güçlü", req:["wrum","drum","passion","oj","lime","grenadine"], lines:[["50 ml","wrum"],["50 ml","drum"],["50 ml","passion"],["30 ml","oj"],["15 ml","lime"],["10 ml","grenadine"]], method:"Buzla çalkala, buzlu uzun bardağa süz.", garnish:["Portakal, kiraz","orange"], glass:"highball", color:"#e8452c", src:KL, strong:true, pri:2},
+ {id:"zombie", name:"Zombie", taste:"tiki, çok güçlü", req:["wrum","drum","overproof","lime","falernum","grenadine"], lines:[["45 ml","wrum"],["45 ml","drum"],["30 ml","overproof"],["20 ml","lime"],["15 ml","falernum"],["15 ml","grenadine"]], opt:[["1 dash","absinthe"],["1 dash","bitters"]], method:"Buzla çalkala, kırık buzlu uzun bardağa al.", garnish:["Nane dalı","mint"], glass:"highball", color:"#d8652a", src:KL, info:"Çok güçlü: tek bardakta 3'ten fazla shot alkol var.", strong:true, pri:2},
+ {id:"painkiller", name:"Painkiller", taste:"tropikal, kremalı", req:["drumG","pine","oj","coconutc"], lines:[["60 ml","drumG"],["120 ml","pine"],["30 ml","oj"],["30 ml","coconutc"]], opt:[["Üstüne","nutmeg"]], method:"Buzla çalkala, buzlu uzun bardağa al.", garnish:["Ananas","pine"], glass:"highball", color:"#f2c46a", src:KL, pri:2},
+ {id:"elpresidente", name:"El Presidente", taste:"zarif, vermutlu", req:["wrum","dry","orangeL","grenadine"], lines:[["45 ml","wrum"],["20 ml","dry"],["10 ml","orangeL"],["5 ml","grenadine"]], method:"Buzla karıştır, coupe'a süz.", garnish:["Portakal kabuğu","peel"], glass:"coupe", color:"#e8862c", src:KL, pri:2},
+ {id:"canchanchara", name:"Canchánchara", taste:"ballı, ekşi", req:["wrum","lime","honey"], lines:[["60 ml","wrum"],["15 ml","lime"],["15 ml","honey"]], method:"Bardakta bal ve limonu erit, buz ve romu ekleyip karıştır.", garnish:["Misket limonu","lime"], glass:"rocks", color:"#f1e2a8", src:iba("canchanchara"), pri:2},
+ {id:"oldcuban", name:"Old Cuban", taste:"naneli, köpüklü", req:["drumG","lime","sweet","mint","prosecco"], lines:[["45 ml","drumG"],["22,5 ml","lime"],["30 ml","sweet"],["6–8 yaprak","mint"],["60 ml","prosecco"]], opt:[["2 dash","bitters"]], method:"Köpüklü dışındakileri buzla çalkala, coupe'a çift süz, köpüklüyle tamamla.", garnish:["Nane yaprağı","mint"], glass:"coupe", color:"#e4d49a", fizzy:true, src:iba("old-cuban"), pri:3},
+ {id:"junglebird", name:"Jungle Bird", taste:"tropikal, acımsı", req:["drumG","campari","pine","sour","sweet"], lines:[["45 ml","drumG"],["22,5 ml","campari"],["45 ml","pine"],["15 ml","sour"],["15 ml","sweet"]], method:"Buzla çalkala, buzlu rocks bardağına süz.", garnish:["Ananas","pine"], glass:"rocks", color:"#d9541f", src:iba("jungle-bird"), pri:3},
+ {id:"cubalibre", name:"Cuba Libre", taste:"kolalı, ferah", req:["rum","cola"], lines:[["50 ml","rum"],["120 ml","cola"]], opt:[["10 ml","lime"]], method:"Buzlu highball'a romu koy, kolayla tamamla, misket limonu sık.", garnish:["Misket limonu","lime"], glass:"highball", color:"#3b1a0c", fizzy:true, src:iba("cuba-libre"), pri:1},
+ {id:"darkstormy", name:"Dark 'n' Stormy", taste:"zencefilli, baharatlı", req:["drumG","ginger"], lines:[["60 ml","drumG"],["100 ml","ginger"]], opt:[["10 ml","lime"]], method:"Buzlu highball'a ginger'ı koy, koyu romu en üste yavaşça dök.", garnish:["Misket limonu","lime"], glass:"highball", color:"#9c6a33", fizzy:true, src:iba("dark-n-stormy"), pri:2},
+ {id:"spicedginger", name:"Baharatlı Rom & Ginger", taste:"vanilyalı, zencefilli", req:["spicedrum","ginger"], lines:[["50 ml","spicedrum"],["120 ml","ginger"]], opt:[["1 dilim","lime"]], method:"Buzlu highball'da build et.", garnish:["Misket limonu","lime"], glass:"highball", color:"#b07a3a", fizzy:true, src:YAY, pri:1},
+ {id:"malibupine", name:"Malibu Ananas", taste:"tatlı, tropikal", req:["malibu","pine"], lines:[["50 ml","malibu"],["120 ml","pine"]], method:"Buzlu highball'da karıştır.", garnish:["Ananas","pine"], glass:"highball", color:"#f6e7a8", src:YAY, pri:1},
+ {id:"bluehawaiian", name:"Blue Hawaiian", taste:"tropikal, kremalı, mavi", req:["wrum","curacao","pine","coconutc"], lines:[["30 ml","wrum"],["15 ml","curacao"],["60 ml","pine"],["30 ml","coconutc"]], method:"Buzla çalkala ya da blender'da çek.", garnish:["Ananas","pine"], glass:"highball", color:"#6ac0d8", src:KL, pri:2},
+ {id:"rumcoco", name:"Rom & Hindistancevizi Suyu", taste:"hafif, tropikal", req:["rum","coconutw"], lines:[["45 ml","rum"],["150 ml","coconutw"]], opt:[["10 ml","lime"]], method:"Buzlu highball'da karıştır.", garnish:["Misket limonu","lime"], glass:"highball", color:"#f2efe2", src:YAY, pri:1},
+ {id:"caipirinha", name:"Caipirinha", taste:"ekşi, şekerli, güçlü", req:["cachaca","lime","sugar"], lines:[["50 ml","cachaca"],["½ adet, dilimlenmiş","lime"],["2 tatlı kaşığı","sugar"]], method:"Misket limonunu şekerle bardakta ez, kırık buz ve cachaça'yı ekleyip karıştır.", garnish:["Misket limonu","lime"], glass:"rocks", color:"#eef2c8", src:iba("caipirinha"), pri:3},
+ {id:"rabodegalo", name:"Rabo de Galo", taste:"acı-tatlı, bitkisel", req:["cachaca","rosso","cynar"], lines:[["60 ml","cachaca"],["20 ml","rosso"],["15 ml","cynar"]], method:"Buzlu rocks bardağında karıştır.", garnish:["Portakal kabuğu","peel"], glass:"rocks", color:"#8a3a1a", src:iba("rabo-de-galo"), strong:true, pri:2},
+ // --- Agave
+ {id:"margarita", name:"Margarita", taste:"ekşi, tuzlu kenar", req:["agave","triple","sour"], lines:[["50 ml","agave"],["20 ml","triple"],["15 ml","sour"]], opt:[["Kenar için","salt"]], method:"Bardağın kenarını tuzla, malzemeleri buzla çalkalayıp süz.", garnish:["Misket limonu","lime"], glass:"coupe", color:"#e8eeb0", src:iba("margarita"), pri:3},
+ {id:"tommys", name:"Tommy's Margarita", taste:"ekşi, agaveli", req:["tequilaG","lime","agave_s"], lines:[["60 ml","tequilaG"],["30 ml","lime"],["15 ml","agave_s"]], method:"Buzla çalkala, buzlu rocks'a süz.", garnish:["Misket limonu","lime"], glass:"rocks", color:"#eaf0b8", src:iba("tommys-margarita"), pri:3},
+ {id:"spicymarg", name:"Acılı Margarita", taste:"acı, ekşi", req:["tequilaG","triple","lime","chili"], lines:[["50 ml","tequilaG"],["20 ml","triple"],["20 ml","lime"],["2 dilim","chili"]], opt:[["Kenar için","salt"]], method:"Biberi shaker'da hafif ez, diğerlerini ekle, buzla çalkala, çift süz.", garnish:["Biber dilimi","lime"], glass:"coupe", color:"#e2eaa0", src:YAY, pri:2},
+ {id:"mangomarg", name:"Mango Margarita", taste:"meyveli, ekşi", req:["tequilaG","triple","lime","mango"], lines:[["45 ml","tequilaG"],["15 ml","triple"],["20 ml","lime"],["45 ml","mango"]], method:"Buzla çalkala ya da kırık buzla blender'da çek.", garnish:["Misket limonu","lime"], glass:"coupe", color:"#f7b43a", src:YAY, pri:2},
+ {id:"paloma", name:"Paloma", taste:"greyfurtlu, tuzlu, ferah", req:["tequilaG","gf","lime"], lines:[["50 ml","tequilaG"],["15 ml","lime"],["100 ml","gf"]], opt:[["1 tutam","salt"]], method:"Buzlu highball'a tekila, limon ve bir tutam tuz koy, greyfurtlu gazozla tamamla. Greyfurt suyu kullanıyorsan 60 ml suyu biraz şurup ve sodayla aç.", garnish:["Misket limonu","lime"], glass:"highball", color:"#f6c8b8", fizzy:true, src:iba("paloma"), pri:3},
+ {id:"sunrise", name:"Tequila Sunrise", taste:"meyveli, gün batımı", req:["tequilaG","oj","grenadine"], lines:[["45 ml","tequilaG"],["90 ml","oj"],["15 ml (dibe)","grenadine"]], method:"Buzlu highball'da tekila ve portakal suyunu karıştır, grenadini yavaşça dibe bırak.", garnish:["Portakal dilimi","orange"], glass:"highball", color:"#f39a2a", src:iba("tequila-sunrise"), pri:2},
+ {id:"batanga", name:"Batanga", taste:"kolalı, tuzlu", req:["tequilaG","cola","sour"], lines:[["50 ml","tequilaG"],["10 ml","sour"],["Tamamla","cola"]], opt:[["Kenar için","salt"]], method:"Tuz kenarlı buzlu highball'da build et.", garnish:["Misket limonu","lime"], glass:"highball", color:"#40200f", fizzy:true, src:KL, pri:2},
+ {id:"tequilamule", name:"Tequila Mule", taste:"zencefilli, ferah", req:["agave","ginger","sour"], lines:[["45 ml","agave"],["15 ml","sour"],["120 ml","ginger"]], method:"Buzlu kupada build et.", garnish:["Misket limonu","lime"], glass:"copper", color:"#efe2b2", fizzy:true, src:YAY, pri:1},
+ {id:"tequilatonic", name:"Tequila Tonic", taste:"kuru, ferah", req:["agave","tonic"], lines:[["50 ml","agave"],["150 ml","tonic"]], opt:[["1 dilim","lime"]], method:"Buzlu highball'da build et.", garnish:["Misket limonu","lime"], glass:"highball", color:"#eef2ec", fizzy:true, src:KL, pri:1},
+ {id:"mezcalnegroni", name:"Mezcal Negroni", taste:"isli, acı-tatlı", req:["mezcal","rosso","campari"], lines:[["30 ml","mezcal"],["30 ml","rosso"],["30 ml","campari"]], method:"Buzlu rocks bardağında karıştır.", garnish:["Portakal dilimi","orange"], glass:"rocks", color:"#a8261e", src:KL, pri:3},
+ {id:"nakedfamous", name:"Naked and Famous", taste:"isli, narenciyeli", req:["mezcal","aperol","charty","lime"], lines:[["22,5 ml","mezcal"],["22,5 ml","aperol"],["22,5 ml","charty"],["22,5 ml","lime"]], method:"Buzla çalkala, coupe'a süz.", garnish:["—","none"], glass:"coupe", color:"#f0a03a", src:iba("naked-and-famous"), pri:3},
+ {id:"oaxacaof", name:"Oaxaca Old Fashioned", taste:"isli, aromatik", req:["tequilaG","mezcal","agave_s","bitters"], lines:[["45 ml","tequilaG"],["15 ml","mezcal"],["5 ml","agave_s"],["2 dash","bitters"]], method:"Buzla karıştır, büyük buzlu rocks'a süz.", garnish:["Portakal kabuğu","peel"], glass:"rocks", color:"#c98a3a", src:KL, strong:true, pri:2},
+ // --- Brendi & pisco
+ {id:"sidecar", name:"Sidecar", taste:"narenciyeli, zarif", req:["cognac","triple","lemon"], lines:[["50 ml","cognac"],["20 ml","triple"],["20 ml","lemon"]], method:"Buzla çalkala, şeker kenarlı coupe'a süz.", garnish:["Portakal kabuğu","peel"], glass:"coupe", color:"#e2a043", src:iba("sidecar"), pri:3},
+ {id:"alexander", name:"Brandy Alexander", taste:"kremalı, kakaolu", req:["cognac","cacaodark","creamG"], lines:[["30 ml","cognac"],["30 ml","cacaodark"],["30 ml","creamG"]], opt:[["Üstüne","nutmeg"]], method:"Buzla sertçe çalkala, coupe'a süz.", garnish:["Muskat","none"], glass:"coupe", color:"#c8a07e", src:iba("alexander"), pri:3},
+ {id:"betweensheets", name:"Between the Sheets", taste:"narenciyeli, güçlü", req:["wrum","cognac","triple","lemon"], lines:[["30 ml","wrum"],["30 ml","cognac"],["30 ml","triple"],["20 ml","lemon"]], method:"Buzla çalkala, coupe'a süz.", garnish:["Limon kabuğu","peel"], glass:"coupe", color:"#e8b04a", src:iba("between-the-sheets"), strong:true, pri:2},
+ {id:"stinger", name:"Stinger", taste:"naneli, güçlü", req:["cognac","menthe"], lines:[["50 ml","cognac"],["20 ml","menthe"]], method:"Buzla karıştır, kırık buzlu rocks'a al.", garnish:["Nane yaprağı","mint"], glass:"rocks", color:"#e0b46a", src:iba("stinger"), strong:true, pri:2},
+ {id:"frenchconn", name:"French Connection", taste:"bademli, sıcak", req:["cognac","amaretto"], lines:[["35 ml","cognac"],["35 ml","amaretto"]], method:"Buzlu rocks bardağında karıştır.", garnish:["—","none"], glass:"rocks", color:"#9a5719", src:iba("french-connection"), strong:true, pri:1},
+ {id:"horsesneck", name:"Horse's Neck", taste:"zencefilli, hafif", req:["cognac","ginger"], lines:[["40 ml","cognac"],["120 ml","ginger"]], opt:[["1 dash","bitters"]], method:"Buzlu highball'a uzun spiral limon kabuğunu yerleştir, konyak ve ginger ale'i ekle.", garnish:["Spiral limon kabuğu","peel"], glass:"highball", color:"#e6b56a", fizzy:true, src:iba("horses-neck"), pri:2},
+ {id:"champcocktail", name:"Champagne Cocktail", taste:"köpüklü, aromatik", req:["prosecco","sweet","bitters"], lines:[["1 küp / 5 ml","sweet"],["2 dash","bitters"],["Tamamla","prosecco"]], opt:[["10 ml","cognac"]], method:"Şeker küpünü bitterle ıslatıp flütün dibine koy, varsa konyağı ekle, köpüklüyle tamamla.", garnish:["Portakal kabuğu","peel"], glass:"flute", color:"#f2d68a", fizzy:true, src:iba("champagne-cocktail"), pri:2},
+ {id:"piscosour", name:"Pisco Sour", taste:"ekşi, köpüklü", req:["pisco","lime","sweet"], lines:[["60 ml","pisco"],["30 ml","lime"],["20 ml","sweet"]], opt:[["1 adet","egg"],["3 damla (üste)","bitters"]], method:"Önce buzsuz, sonra buzla çalkala; coupe'a süz, köpüğe bitter damlat.", garnish:["Bitter damlaları","none"], glass:"coupe", color:"#f2ead0", top:{c:"#fbf7ec",h:9,need:"egg"}, src:iba("pisco-sour"), pri:3},
+ {id:"jackrose", name:"Jack Rose", taste:"elmalı, ekşi", req:["calvados","lemon","grenadine"], lines:[["45 ml","calvados"],["15 ml","lemon"],["10 ml","grenadine"]], method:"Buzla çalkala, coupe'a süz.", garnish:["Elma dilimi","peel"], glass:"coupe", color:"#e85a5a", src:KL, pri:2},
+ {id:"sangria", name:"Sangria", taste:"meyveli, kalabalık için", req:["redwine","orange","sweet"], lines:[["750 ml","redwine"],["1 adet, doğranmış","orange"],["2 yemek kaşığı","sweet"]], opt:[["60 ml","cognac"],["60 ml","triple"],["1 adet, doğranmış","apple"],["Servis ederken","soda"]], method:"Sürahide karıştır, en az 2 saat buzdolabında beklet, buzlu kadehlere dağıt.", garnish:["Portakal dilimi","orange"], glass:"wine", color:"#7a1426", src:KL, info:"4–6 kişilik.", pri:2},
+ // --- Aperatif, vermut, şarap, köpüklü, bira
+ {id:"americano", name:"Americano", taste:"hafif, acı-tatlı, köpüklü", req:["campari","rosso","soda"], lines:[["30 ml","campari"],["30 ml","rosso"],["Tamamla","soda"]], method:"Buzlu highball'a Campari ve vermutu koy, sodayla tamamla, bir kez karıştır.", garnish:["Portakal dilimi","orange"], glass:"highball", color:"#c8402f", fizzy:true, src:iba("americano"), pri:2},
+ {id:"sbagliato", name:"Negroni Sbagliato", taste:"köpüklü, acı-tatlı", req:["campari","rosso","prosecco"], lines:[["30 ml","campari"],["30 ml","rosso"],["30 ml","prosecco"]], method:"Buzlu kadehe Campari ve vermutu koy, üstüne köpüklüyü ekleyip hafifçe karıştır.", garnish:["Portakal dilimi","orange"], glass:"wine", color:"#c23a2a", fizzy:true, src:KL, pri:2},
+ {id:"spritz", name:"Aperol Spritz", taste:"ferah, acımsı, köpüklü", req:["aperol","prosecco"], lines:[["90 ml","prosecco"],["60 ml","aperol"],["Bir dokunuş","soda"]], method:"Buzlu şarap kadehine önce köpüklü, sonra Aperol koy, soda ile bitir.", garnish:["Portakal dilimi","orange"], glass:"wine", color:"#f2701f", fizzy:true, src:iba("spritz"), pri:3},
+ {id:"selectspritz", name:"Venedik Spritz", taste:"acı, tuzlu zeytinli", req:["select","prosecco"], lines:[["60 ml","select"],["90 ml","prosecco"],["30 ml","soda"]], method:"Buzlu kadehte build et. Venedik usulü yeşil zeytinle servis edilir.", garnish:["Yeşil zeytin","olive"], glass:"wine", color:"#c8301e", fizzy:true, src:YAY, pri:2},
+ {id:"camparisoda", name:"Campari Soda", taste:"acı, ferah", req:["campari","soda"], lines:[["50 ml","campari"],["100 ml","soda"]], method:"Buzlu bardakta build et.", garnish:["Portakal dilimi","orange"], glass:"highball", color:"#d23a2c", fizzy:true, src:KL, pri:1},
+ {id:"garibaldi", name:"Garibaldi", taste:"meyveli, acımsı", req:["campari","oj"], lines:[["45 ml","campari"],["120 ml","oj"]], method:"Buzlu highball'a Campari koy, portakal suyunu köpürterek ekle.", garnish:["Portakal dilimi","orange"], glass:"highball", color:"#ef5a2a", src:iba("garibaldi"), pri:2},
+ {id:"biancotonic", name:"Bianco & Tonic", taste:"hafif, vanilyalı, ferah", req:["bianco","vfizz"], lines:[["60 ml","bianco"],["100 ml","vfizz"]], opt:[["1 dilim","lime"]], method:"Buzlu şarap kadehinde build et.", garnish:["Misket limonu","lime"], glass:"wine", color:"#f4edcd", fizzy:true, src:YAY, pri:1},
+ {id:"rossotonic", name:"Rosso & Tonic", taste:"bitter-tatlı, hafif", req:["rosso","vfizz"], lines:[["60 ml","rosso"],["100 ml","vfizz"]], method:"Buzlu şarap kadehinde build et.", garnish:["Portakal dilimi","orange"], glass:"wine", color:"#9b2c1c", fizzy:true, src:YAY, pri:1},
+ {id:"rosatotonic", name:"Rosato & Tonic", taste:"meyveli, pembe, ferah", req:["rosato","tonic"], lines:[["60 ml","rosato"],["100 ml","tonic"]], opt:[["2 adet","strawberry"]], method:"Buzlu şarap kadehinde build et.", garnish:["Çilek","berry"], glass:"wine", color:"#f29aa8", fizzy:true, src:YAY, pri:1},
+ {id:"lillettonic", name:"Lillet Tonic", taste:"çiçeksi, hafif", req:["lillet","tonic"], lines:[["50 ml","lillet"],["100 ml","tonic"]], opt:[["2 dilim","cucumber"]], method:"Buzlu şarap kadehinde build et.", garnish:["Salatalık","cucumber"], glass:"wine", color:"#f3eab0", fizzy:true, src:KL, pri:1},
+ {id:"biancoespresso", name:"Bianco Espresso Fizz", taste:"hafif, kahveli, aperatif", req:["bianco","coffee","sweetfizz"], lines:[["60 ml","bianco"],["100 ml","sweetfizz"],["30 ml","coffee"]], method:"Buzlu kadehe Bianco ve gazlıyı koy, soğuk kahveyi kaşığın sırtından yavaşça dök.", garnish:["—","none"], glass:"wine", color:"#e8d8a8", top:{c:"#3a2213",h:14}, fizzy:true, src:DOGA, pri:2},
+ {id:"vermouthduo", name:"Perfect Vermut", taste:"yumuşak, aperatif", req:["rosso","bianco"], lines:[["40 ml","rosso"],["40 ml","bianco"]], opt:[["Bir sıkım","soda"]], method:"Buzlu rocks bardağında karıştır, istersen sodayla aç.", garnish:["Portakal kabuğu","peel"], glass:"rocks", color:"#b8582a", src:DOGA, pri:1},
+ {id:"adonis", name:"Adonis", taste:"kuru, cevizli", req:["sherry","rosso"], lines:[["45 ml","sherry"],["45 ml","rosso"]], opt:[["2 dash","obitters"]], method:"Buzla karıştır, coupe'a süz.", garnish:["Portakal kabuğu","peel"], glass:"coupe", color:"#a8521e", src:KL, pri:2},
+ {id:"sherrycobbler", name:"Sherry Cobbler", taste:"hafif, meyveli", req:["sherry","sweet","orange"], lines:[["90 ml","sherry"],["10 ml","sweet"],["½ dilim","orange"]], opt:[["½ dilim","lemon"]], method:"Meyveyle buzla çalkala, süzmeden kırık buzlu bardağa al.", garnish:["Portakal dilimi","orange"], glass:"rocks", color:"#e8b05a", src:iba("sherry-cobbler"), pri:2},
+ {id:"rebujito", name:"Rebujito", taste:"kuru, ferah", req:["sherry","sprite"], lines:[["60 ml","sherry"],["120 ml","sprite"]], opt:[["1 dal","mint"]], method:"Buzlu uzun bardakta karıştır.", garnish:["Nane","mint"], glass:"highball", color:"#eee8b8", fizzy:true, src:KL, pri:1},
+ {id:"portoflip", name:"Porto Flip", taste:"kadifemsi, tatlı", req:["port","cognac","egg"], lines:[["45 ml","port"],["15 ml","cognac"],["1 sarısı","egg"]], method:"Önce buzsuz, sonra buzla sertçe çalkala, coupe'a süz.", garnish:["Muskat","none"], glass:"coupe", color:"#a8402a", src:iba("porto-flip"), pri:2},
+ {id:"kir", name:"Kir", taste:"meyveli, hafif", req:["whitewine","cassis"], lines:[["90 ml","whitewine"],["10 ml","cassis"]], method:"Soğuk şarap kadehinde karıştır.", garnish:["—","none"], glass:"wine", color:"#e8b0b8", src:iba("kir"), pri:2},
+ {id:"kirroyale", name:"Kir Royale", taste:"meyveli, köpüklü", req:["prosecco","cassis"], lines:[["90 ml","prosecco"],["10 ml","cassis"]], method:"Flüte likörü koy, köpüklüyle tamamla.", garnish:["—","none"], glass:"flute", color:"#c84a6a", fizzy:true, src:KL, pri:2},
+ {id:"bellini", name:"Bellini", taste:"şeftalili, köpüklü", req:["prosecco","peachp"], lines:[["100 ml","prosecco"],["50 ml","peachp"]], method:"Flüte püreyi koy, köpüklüyü yavaşça ekleyip hafifçe karıştır.", garnish:["—","none"], glass:"flute", color:"#f7c79a", fizzy:true, src:iba("bellini"), pri:2},
+ {id:"rossini", name:"Rossini", taste:"çilekli, köpüklü", req:["prosecco","strawberry"], lines:[["100 ml","prosecco"],["50 ml (püre)","strawberry"]], method:"Çilekleri ezip süz, flüte koy, köpüklüyle tamamla.", garnish:["Çilek","berry"], glass:"flute", color:"#e85a6a", fizzy:true, src:KL, pri:1},
+ {id:"mimosa", name:"Mimosa", taste:"meyveli, köpüklü", req:["prosecco","oj"], lines:[["75 ml","prosecco"],["75 ml","oj"]], method:"Flüte önce portakal suyu, sonra köpüklü.", garnish:["—","none"], glass:"flute", color:"#f8b433", fizzy:true, src:iba("mimosa"), pri:1},
+ {id:"limoncellospritz", name:"Limoncello Spritz", taste:"limonlu, köpüklü", req:["limoncello","prosecco"], lines:[["60 ml","limoncello"],["90 ml","prosecco"],["Bir sıkım","soda"]], method:"Buzlu kadehte build et.", garnish:["Limon dilimi","lemon"], glass:"wine", color:"#f6ea8a", fizzy:true, src:KL, pri:2},
+ {id:"deathafternoon", name:"Death in the Afternoon", taste:"anasonlu, köpüklü", req:["absinthe","prosecco"], lines:[["30 ml","absinthe"],["120 ml","prosecco"]], method:"Flüte absenti koy, köpüklüyü yavaşça ekle; bulanıklaşacak.", garnish:["—","none"], glass:"flute", color:"#e8f0c8", fizzy:true, src:KL, strong:true, pri:1},
+ {id:"spritzer", name:"Beyaz Şarap Spritzer", taste:"hafif, ferah", req:["whitewine","soda"], lines:[["100 ml","whitewine"],["60 ml","soda"]], method:"Buzlu kadehte karıştır.", garnish:["Limon dilimi","lemon"], glass:"wine", color:"#f3eec0", fizzy:true, src:KL, pri:0},
+ {id:"rosespritz", name:"Roze Spritz", taste:"meyveli, hafif", req:["rosewine","soda"], lines:[["100 ml","rosewine"],["50 ml","soda"]], opt:[["2 adet","strawberry"],["1 dal","rosemary"]], method:"Buzlu kadehte karıştır.", garnish:["Çilek","berry"], glass:"wine", color:"#f4a8a8", fizzy:true, src:KL, pri:0},
+ {id:"kalimotxo", name:"Kalimotxo", taste:"meyveli, kolalı", req:["redwine","cola"], lines:[["75 ml","redwine"],["75 ml","cola"]], method:"Buzlu bardakta yarı yarıya karıştır.", garnish:["Limon dilimi","lemon"], glass:"highball", color:"#4b0e14", fizzy:true, src:KL, pri:1},
+ {id:"tinto", name:"Tinto de Verano", taste:"hafif, yazlık", req:["redwine","sprite"], lines:[["90 ml","redwine"],["90 ml","sprite"]], method:"Buzlu kadehte yarı yarıya karıştır.", garnish:["Limon dilimi","lemon"], glass:"wine", color:"#8f1d2c", fizzy:true, src:KL, pri:1},
+ {id:"mulledwine", name:"Sıcak Şarap", taste:"baharatlı, sıcak", req:["redwine","orange","cinnamon","sweet"], lines:[["750 ml","redwine"],["1 adet, dilimlenmiş","orange"],["2 çubuk","cinnamon"],["3 yemek kaşığı","sweet"]], opt:[["5–6 adet","clove"],["50 ml","cognac"]], method:"Hepsini tencerede kaynatmadan 10–15 dakika ısıt, kupalara süz.", garnish:["Portakal dilimi","orange"], glass:"mug", color:"#6a0e1e", src:KL, info:"4–6 kişilik. Kaynatma, alkol uçar.", pri:2},
+ {id:"blackvelvet", name:"Black Velvet", taste:"kavrulmuş, köpüklü", req:["stout","prosecco"], lines:[["½ bardak","stout"],["½ bardak","prosecco"]], method:"Flüte önce köpüklüyü, sonra stout'u kaşığın sırtından dök.", garnish:["—","none"], glass:"flute", color:"#2a1a12", top:{c:"#e8d8b8",h:10}, fizzy:true, src:KL, pri:1},
+ {id:"michelada", name:"Michelada", taste:"ekşi, tuzlu, acı", req:["beer","lime","salt","tabasco"], lines:[["Tamamla","beer"],["30 ml","lime"],["Kenar için","salt"],["2–3 damla","tabasco"]], opt:[["2 dash","worcester"]], method:"Bardağın kenarını tuzla, limon ve sosları koy, buz ekle, birayla tamamla.", garnish:["Misket limonu","lime"], glass:"highball", color:"#e8a03a", top:{c:"#fbf5e6",h:10}, fizzy:true, src:KL, pri:2},
+ {id:"shandy", name:"Shandy", taste:"hafif, limonlu", req:["beer","sprite"], lines:[["½ bardak","beer"],["½ bardak","sprite"]], method:"Soğuk bardağa birayı, sonra gazozu dök.", garnish:["—","none"], glass:"highball", color:"#f0c24f", top:{c:"#fbf5e6",h:16}, fizzy:true, src:KL, pri:0},
+ {id:"snakebite", name:"Snakebite", taste:"elmalı, bira", req:["beer","cider"], lines:[["½ bardak","beer"],["½ bardak","cider"]], method:"Soğuk bardakta yarı yarıya karıştır.", garnish:["—","none"], glass:"highball", color:"#e8c25a", top:{c:"#fbf5e6",h:12}, fizzy:true, src:KL, pri:1},
+ // --- Likör ağırlıklı
+ {id:"amarettosour", name:"Amaretto Sour", taste:"bademli, ekşi-tatlı", req:["amaretto","sour","sweet"], lines:[["45 ml","amaretto"],["25 ml","sourL"],["10 ml","sweet"]], opt:[["15 ml","bourbon"],["1 adet","egg"]], method:"Yumurta varsa önce buzsuz, sonra buzla çalkala; buzlu rocks'a süz.", garnish:["Kiraz","cherry"], glass:"rocks", color:"#e8b34b", top:{c:"#f4ead2",h:8,need:"egg"}, src:KL, pri:2},
+ {id:"godmother", name:"Godmother", taste:"bademli, yumuşak", req:["vodkaG","amaretto"], lines:[["35 ml","vodkaG"],["35 ml","amaretto"]], method:"Buzlu rocks bardağında karıştır.", garnish:["—","none"], glass:"rocks", color:"#c98a3a", src:KL, pri:1},
+ {id:"grasshopper", name:"Grasshopper", taste:"naneli, kremalı, tatlı", req:["menthe","cacaowhite","creamG"], lines:[["30 ml","menthe"],["30 ml","cacaowhite"],["30 ml","creamG"]], method:"Buzla sertçe çalkala, coupe'a süz.", garnish:["Nane yaprağı","mint"], glass:"coupe", color:"#a8e0a0", src:iba("grasshopper"), pri:2},
+ {id:"b52", name:"B-52", taste:"katmanlı shot, tatlı", req:["kahlua","baileys","triple"], lines:[["20 ml","kahlua"],["20 ml","baileys"],["20 ml","triple"]], method:"Shot bardağına sırayla, kaşığın sırtından yavaşça dökerek katman yap.", garnish:["—","none"], glass:"shot", color:"#3a2010", top:{c:"#e8a83a",h:12}, src:KL, pri:1},
+ {id:"babyguinness", name:"Baby Guinness", taste:"kahveli shot", req:["kahlua","baileys"], lines:[["45 ml","kahlua"],["15 ml (üste)","baileys"]], method:"Kahve likörünü shot bardağına koy, Baileys'i kaşığın sırtından üste yatır.", garnish:["—","none"], glass:"shot", color:"#2a170c", top:{c:"#efe2cb",h:12}, src:KL, pri:1},
+ {id:"jagerbomb", name:"Jägerbomb", taste:"tatlı, gazlı", req:["jager","energy"], lines:[["40 ml (shot)","jager"],["150 ml","energy"]], method:"Shot'ı enerji içeceği dolu bardağa bırak, hemen iç.", garnish:["—","none"], glass:"highball", color:"#c8b04a", fizzy:true, src:KL, info:"Kafein alkolün etkisini maskeler; birden fazla içme.", pri:0},
+ {id:"jagercola", name:"Jäger & Kola", taste:"otsu, tatlı", req:["jager","cola"], lines:[["40 ml","jager"],["120 ml","cola"]], method:"Buzlu highball'da build et.", garnish:["Misket limonu","lime"], glass:"highball", color:"#2c140a", fizzy:true, src:KL, pri:0},
+ {id:"jagermule", name:"Jäger Mule", taste:"otsu, zencefilli", req:["jager","ginger"], lines:[["45 ml","jager"],["120 ml","ginger"]], opt:[["10 ml","lime"]], method:"Buzlu kupada build et.", garnish:["Misket limonu","lime"], glass:"copper", color:"#7b4a20", fizzy:true, src:YAY, pri:1},
+ {id:"jagercool", name:"Jäger Cool Lime", taste:"naneli, otsu, ferah", req:["jager","coollime"], lines:[["30 ml","jager"],["120 ml","coollime"]], opt:[["Bir sıkım","soda"]], method:"Buzlu highball'a Jäger'ı koy, cool lime ekle, varsa sodayla aç.", garnish:["Nane","mint"], glass:"highball", color:"#9a8a3a", fizzy:true, src:DOGA, pri:2},
+ {id:"midorisour", name:"Midori Sour", taste:"kavunlu, ekşi", req:["midori","vodkaG","lemon"], lines:[["30 ml","midori"],["30 ml","vodkaG"],["30 ml","lemon"]], opt:[["Tamamla","soda"]], method:"Buzla çalkala, buzlu rocks'a süz, istersen sodayla aç.", garnish:["Kiraz","cherry"], glass:"rocks", color:"#8ad06a", src:KL, pri:2},
+ {id:"snowball", name:"Snowball", taste:"kremalı, limonlu, köpüklü", req:["advocaat","sprite"], lines:[["50 ml","advocaat"],["Tamamla","sprite"]], opt:[["Bir sıkım","lime"]], method:"Buzlu highball'da karıştır.", garnish:["—","none"], glass:"highball", color:"#f6e8a0", fizzy:true, src:KL, pri:1},
+ {id:"fuzzynavel", name:"Fuzzy Navel", taste:"şeftalili, tatlı", req:["peach","oj"], lines:[["45 ml","peach"],["120 ml","oj"]], method:"Buzlu highball'da karıştır.", garnish:["Portakal dilimi","orange"], glass:"highball", color:"#f7a83a", src:KL, pri:1},
+ {id:"passoaoj", name:"Passoa & Portakal", taste:"tropikal, tatlı", req:["passoa","oj"], lines:[["50 ml","passoa"],["120 ml","oj"]], method:"Buzlu highball'da karıştır.", garnish:["Portakal dilimi","orange"], glass:"highball", color:"#f6a82a", src:YAY, pri:0},
+ {id:"sambucamosca", name:"Sambuca con la Mosca", taste:"anasonlu, kahveli", req:["sambuca","beans"], lines:[["30 ml","sambuca"],["3 adet","beans"]], method:"Shot bardağına sambucayı koy, 3 kahve çekirdeği bırak (sağlık, mutluluk, bereket).", garnish:["3 kahve çekirdeği","beans"], glass:"shot", color:"#f4f4ef", src:KL, pri:1},
+ {id:"baileyscoffee", name:"Baileys Kahve", taste:"kremalı, sıcak", req:["baileys","coffee"], lines:[["50 ml","baileys"],["120 ml (sıcak)","coffee"]], method:"Sıcak kahveye Baileys ekle, karıştır.", garnish:["—","none"], glass:"mug", color:"#6b4024", top:{c:"#e8d8bf",h:12}, src:KL, pri:1},
+ {id:"affogatob", name:"Baileys Affogato", taste:"tatlı, kahveli", req:["icecream","coffee","baileys"], lines:[["1 top","icecream"],["30 ml (sıcak espresso)","coffee"],["25 ml","baileys"]], method:"Dondurmayı bardağa koy, üstüne Baileys ve sıcak espressoyu dök, hemen servis et.", garnish:["Kahve çekirdeği","beans"], glass:"rocks", color:"#6b4024", top:{c:"#f4ecdc",h:20}, src:YAY, pri:2},
+ {id:"mojitospritz", name:"Mojito Spritz", taste:"naneli, vermutlu, köpüklü", req:["mojitomix","bianco"], lines:[["100 ml","mojitomix"],["40 ml","bianco"]], opt:[["Tamamla","soda"]], method:"Buzlu şarap kadehine hazır mojito ve Bianco'yu koy, sodayla tamamla. Hazır karışım zaten tatlı, şurup ekleme.", garnish:["Nane","mint"], glass:"wine", color:"#eef1d5", fizzy:true, src:DOGA, pri:2},
+ {id:"mojitoroyale", name:"Mojito Royale", taste:"naneli, köpüklü", req:["mojitomix","prosecco"], lines:[["90 ml","mojitomix"],["60 ml","prosecco"]], method:"Buzlu kadehe hazır mojitoyu koy, üstüne köpüklüyü ekle.", garnish:["Nane","mint"], glass:"flute", color:"#eef1d5", fizzy:true, src:{t:"uyarlama", url:"https://iba-world.com/iba-cocktail/old-cuban/", orig:"Old Cuban"}, info:"Old Cuban fikrinden: mojito + köpüklü, hazır karışımla kısa yol.", pri:2},
+ {id:"quickmarg", name:"Hızlı Margarita", taste:"ekşi, pratik", req:["agave","sourmix"], lines:[["50 ml","agave"],["100 ml","sourmix"]], opt:[["15 ml","triple"],["Kenar için","salt"]], method:"Buzla çalkala, tuz kenarlı buzlu bardağa süz.", garnish:["Misket limonu","lime"], glass:"rocks", color:"#e6eca8", src:YAY, pri:0},
+ {id:"quicksour", name:"Hızlı Whisky Sour", taste:"ekşi-tatlı, pratik", req:["whisky","sourmix"], lines:[["50 ml","whisky"],["90 ml","sourmix"]], method:"Buzla çalkala, buzlu rocks'a süz.", garnish:["Limon dilimi","lemon"], glass:"rocks", color:"#e2b14d", src:YAY, pri:0},
+ {id:"longisland", name:"Long Island Iced Tea", taste:"çok güçlü, kolalı", req:["vodkaG","ginG","wrum","tequilaG","triple","sour","sweet","cola"], lines:[["15 ml","vodkaG"],["15 ml","ginG"],["15 ml","wrum"],["15 ml","tequilaG"],["15 ml","triple"],["25 ml","sourL"],["20 ml","sweet"],["Tamamla","cola"]], method:"Kola dışındakileri buzlu highball'da karıştır, kolayla tamamla.", garnish:["Limon dilimi","lemon"], glass:"highball", color:"#8a4a1c", fizzy:true, src:iba("long-island-iced-tea"), strong:true, pri:2},
+ // --- Rakı & anason
+ {id:"rakisu", name:"Rakı (klasik)", taste:"anasonlu, serin", req:["raki"], lines:[["1 ölçü","raki"],["2 ölçü","su (soğuk)"]], method:"Önce rakıyı, sonra soğuk suyu koy; buzu en son ekle (önce buz koyarsan rakı kristalleşir).", garnish:["—","none"], glass:"highball", color:"#f3f1ea", src:{t:"klasik", label:"Türk sofrası klasiği"}, pri:0},
+ {id:"rakimojito", name:"Rakı Mojito", taste:"anasonlu, naneli", req:["raki","lime","sweet","mint","soda"], lines:[["40 ml","raki"],["20 ml","lime"],["15 ml","sweet"],["6 yaprak","mint"],["Tamamla","soda"]], method:"Naneyi şurup ve limonla hafifçe ez, buz ve rakıyı ekle, sodayla tamamla.", garnish:["Nane dalı","mint"], glass:"highball", color:"#eef3e2", fizzy:true, src:TR, pri:2},
+ {id:"rakitonic", name:"Rakı Tonic", taste:"anasonlu, acımsı, ferah", req:["raki","tonic"], lines:[["40 ml","raki"],["120 ml","tonic"]], opt:[["2 dilim","cucumber"]], method:"Buzlu highball'da rakı ve toniği birleştir.", garnish:["Salatalık","cucumber"], glass:"highball", color:"#f1f2ec", fizzy:true, src:TR, pri:2},
+ {id:"rakisour", name:"Rakı Sour", taste:"anasonlu, ekşi", req:["raki","lemon","sweet"], lines:[["45 ml","raki"],["25 ml","lemon"],["20 ml","sweet"]], opt:[["1 adet","egg"]], method:"Önce buzsuz, sonra buzla çalkala; rocks'a süz.", garnish:["Limon kabuğu","peel"], glass:"rocks", color:"#f2efe0", top:{c:"#fbf8ef",h:8,need:"egg"}, src:TR, pri:2},
+ {id:"karpuzraki", name:"Karpuzlu Rakı Smash", taste:"anasonlu, yazlık", req:["raki","watermelon","lemon","sweet","mint"], lines:[["40 ml","raki"],["60 g","watermelon"],["15 ml","lemon"],["10 ml","sweet"],["5 yaprak","mint"]], method:"Karpuz ve naneyi shaker'da ez, diğerlerini ekleyip buzla çalkala, buzlu rocks'a süz.", garnish:["Nane","mint"], glass:"rocks", color:"#f07a7a", src:TR, info:"Rakı-karpuz-beyaz peynir üçlüsünden.", pri:3},
+ {id:"ouzolemonade", name:"Uzo Limonata", taste:"anasonlu, ekşi-tatlı", req:["ouzo","lemon","sweet"], lines:[["40 ml","ouzo"],["30 ml","lemon"],["20 ml","sweet"],["90 ml","soda veya su"]], method:"Buzlu uzun bardakta karıştır.", garnish:["Limon dilimi","lemon"], glass:"highball", color:"#f3f0dc", src:KL, pri:1},
+ // --- Alkolsüz
+ {id:"virginmojito", name:"Virgin Mojito", taste:"naneli, ferah", mock:true, req:["lime","sweet","mint","soda"], lines:[["25 ml","lime"],["20 ml","sweet"],["8 yaprak","mint"],["Tamamla","soda"]], method:"Naneyi şurup ve limonla hafifçe ez, buz ekle, sodayla tamamla.", garnish:["Nane dalı","mint"], glass:"highball", color:"#e9f4d6", fizzy:true, src:KL, pri:2},
+ {id:"cilekmojito", name:"Çilekli Nojito", taste:"meyveli, naneli", mock:true, req:["strawberry","mint","lime","sweet","soda"], lines:[["4 adet","strawberry"],["6 yaprak","mint"],["20 ml","lime"],["15 ml","sweet"],["Tamamla","soda"]], method:"Çilek ve naneyi şurupla ez, buz ve limonu ekle, sodayla tamamla.", garnish:["Çilek","berry"], glass:"highball", color:"#f28a9a", fizzy:true, src:KL, pri:2},
+ {id:"shirleytemple", name:"Shirley Temple", taste:"tatlı, meyveli", mock:true, req:["gasG","grenadine"], lines:[["150 ml","gasG"],["15 ml","grenadine"]], method:"Buzlu bardakta build et.", garnish:["Kiraz","cherry"], glass:"highball", color:"#f28a8a", fizzy:true, src:KL, pri:1},
+ {id:"royrogers", name:"Roy Rogers", taste:"kolalı, tatlı", mock:true, req:["cola","grenadine"], lines:[["150 ml","cola"],["15 ml","grenadine"]], method:"Buzlu bardakta build et.", garnish:["Kiraz","cherry"], glass:"highball", color:"#4a1a10", fizzy:true, src:KL, pri:1},
+ {id:"virginpina", name:"Virgin Piña Colada", taste:"tropikal, kremalı", mock:true, req:["pine","coconutc"], lines:[["120 ml","pine"],["45 ml","coconutc"]], method:"Kırık buzla blender'da çek.", garnish:["Ananas","pine"], glass:"highball", color:"#f6efd6", src:KL, pri:2},
+ {id:"cinderella", name:"Cinderella", taste:"meyveli, ekşi-tatlı", mock:true, req:["oj","pine","lemon","grenadine"], lines:[["60 ml","oj"],["60 ml","pine"],["30 ml","lemon"],["10 ml","grenadine"]], opt:[["Tamamla","soda"]], method:"Buzla çalkala, buzlu bardağa süz, istersen sodayla aç.", garnish:["Portakal dilimi","orange"], glass:"highball", color:"#f6a03a", src:KL, pri:2},
+ {id:"safari", name:"Safari Juice", taste:"tropikal, meyveli", mock:true, req:["oj","pine","lemon"], lines:[["60 ml","oj"],["60 ml","pine"],["15 ml","lemon"]], opt:[["30 ml","mango"]], method:"Buzla çalkala, buzlu bardağa süz.", garnish:["Portakal dilimi","orange"], glass:"highball", color:"#f7b532", src:KL, pri:1},
+ {id:"pineginger", name:"Ananas Zencefil Cooler", taste:"zencefilli, tropikal", mock:true, req:["pine","lime","gingerroot","sweet"], lines:[["90 ml","pine"],["15 ml","lime"],["2 dilim","gingerroot"],["10 ml","sweet"]], opt:[["Tamamla","soda"]], method:"Zencefili ez, buzla çalkala, buzlu bardağa süz, sodayla aç.", garnish:["Ananas","pine"], glass:"highball", color:"#f2dc8a", src:KL, pri:2},
+ {id:"aguafresca", name:"Karpuz Agua Fresca", taste:"meyveli, serin", mock:true, req:["watermelon","lime","sweet"], lines:[["200 g","watermelon"],["15 ml","lime"],["10 ml","sweet"],["100 ml","su"]], method:"Blender'da çek, süz, buzlu bardağa al.", garnish:["Misket limonu","lime"], glass:"highball", color:"#f26a72", src:KL, pri:2},
+ {id:"kombuchamule", name:"Kombucha Mule", taste:"ekşimsi, gazlı", mock:true, req:["kombucha","lime"], lines:[["120 ml","kombucha"],["15 ml","lime"]], opt:[["4 yaprak","mint"]], method:"Buzlu kupada build et.", garnish:["Misket limonu","lime"], glass:"copper", color:"#e8c88a", fizzy:true, src:KL, pri:1},
+ {id:"sparkelder", name:"Mürver Çiçeği Fizz", taste:"çiçeksi, ferah", mock:true, req:["eldersyr","lemon","soda"], lines:[["25 ml","eldersyr"],["15 ml","lemon"],["Tamamla","soda"]], opt:[["2 dilim","cucumber"]], method:"Buzlu bardakta build et.", garnish:["Salatalık","cucumber"], glass:"highball", color:"#f0f2d8", fizzy:true, src:KL, pri:2},
+ {id:"visnefizz", name:"Vişne Fizz", taste:"mayhoş, köpüklü", mock:true, req:["visne","lemon","soda"], lines:[["90 ml","visne"],["15 ml","lemon"],["Tamamla","soda"]], opt:[["10 ml","sweet"],["3 yaprak","mint"]], method:"Buzlu bardakta build et.", garnish:["Nane","mint"], glass:"highball", color:"#8a1a2a", fizzy:true, src:TR, pri:2},
+ {id:"narspritz", name:"Nar Spritz", taste:"mayhoş, ferah", mock:true, req:["nar","lemon","vfizz"], lines:[["60 ml","nar"],["15 ml","lemon"],["100 ml","vfizz"]], opt:[["10 ml","sweet"],["1 dal","rosemary"]], method:"Buzlu kadehte build et.", garnish:["Biberiye","mint"], glass:"wine", color:"#b8203a", fizzy:true, src:TR, pri:2},
+ {id:"ayrancooler", name:"Naneli Ayran Cooler", taste:"serin, tuzlu", mock:true, req:["ayran","mint"], lines:[["200 ml","ayran"],["6 yaprak","mint"]], opt:[["3 dilim","cucumber"],["1 tutam","salt"]], method:"Blender'da buzla çek, uzun bardağa al.", garnish:["Nane","mint"], glass:"highball", color:"#f6f6ef", top:{c:"#ffffff",h:10}, src:TR, pri:1},
+ {id:"virginmary", name:"Virgin Mary", taste:"tuzlu, baharatlı", mock:true, req:["tomato","lemon"], lines:[["150 ml","tomato"],["15 ml","lemon"]], opt:[["1 tutam","salt"],["1 tutam","pepper"],["2 damla","tabasco"],["2 dash","worcester"]], method:"Buzla iki bardak arasında aktararak karıştır.", garnish:["Limon dilimi","lemon"], glass:"highball", color:"#b42820", src:KL, pri:1},
+ {id:"coolfizz", name:"Cool Lime Fizz", taste:"naneli, köpüklü", mock:true, req:["coollime","soda"], lines:[["120 ml","coollime"],["60 ml","soda"]], opt:[["4 yaprak","mint"]], method:"Buzlu highball'da birleştir.", garnish:["Nane","mint"], glass:"highball", color:"#e3efc7", fizzy:true, src:DOGA, pri:1},
+ {id:"espressotonic", name:"Espresso Tonic", taste:"acımsı, kahveli, ferah", mock:true, req:["coffee","tonic"], lines:[["120 ml","tonic"],["30 ml","coffee"]], method:"Buzlu bardağa toniği koy, espressoyu yavaşça üstüne dök.", garnish:["—","none"], glass:"highball", color:"#e5d8b5", top:{c:"#3a2213",h:26}, fizzy:true, src:KL, pri:2},
+ {id:"affogato", name:"Affogato", taste:"tatlı, kahveli", mock:true, req:["icecream","coffee"], lines:[["1 top","icecream"],["30 ml (sıcak espresso)","coffee"]], method:"Dondurmayı bardağa koy, sıcak espressoyu üstüne dök.", garnish:["—","none"], glass:"rocks", color:"#6b4024", top:{c:"#f4ecdc",h:22}, src:KL, pri:1},
+ {id:"limonata", name:"Ev Limonatası", taste:"ekşi-tatlı", mock:true, req:["lemon","sweet"], lines:[["50 ml","lemon"],["40 ml","sweet"],["150 ml","soda veya su"]], opt:[["4 yaprak","mint"]], method:"Limon ve şurubu karıştır, buzlu bardakta su veya sodayla tamamla.", garnish:["Limon dilimi","lemon"], glass:"highball", color:"#f6efb4", src:KL, pri:1},
+ {id:"arnold", name:"Arnold Palmer", taste:"çaylı, limonlu", mock:true, req:["tea","lemon","sweet"], lines:[["100 ml","tea"],["40 ml","lemon"],["30 ml","sweet"],["50 ml","su"]], method:"Hepsini buzlu bardakta karıştır.", garnish:["Limon dilimi","lemon"], glass:"highball", color:"#c47f2a", src:KL, pri:1},
+ {id:"iceteafizz", name:"Ice Tea Fizz", taste:"meyveli, köpüklü", mock:true, req:["icetea","soda"], lines:[["120 ml","icetea"],["60 ml","soda"]], opt:[["10 ml","lemon"],["4 yaprak","mint"]], method:"Buzlu bardakta build et.", garnish:["Limon dilimi","lemon"], glass:"highball", color:"#d8923a", fizzy:true, src:DOGA, pri:0},
+ {id:"virginmarg", name:"Virgin Margarita", taste:"ekşi, tuzlu kenar", mock:true, req:["oj","lime","sweet"], lines:[["60 ml","oj"],["30 ml","lime"],["15 ml","sweet"]], opt:[["Kenar için","salt"],["Bir sıkım","soda"]], method:"Buzla çalkala, tuz kenarlı bardağa süz.", garnish:["Misket limonu","lime"], glass:"coupe", color:"#f2d07a", src:KL, pri:1},
+ {id:"cococooler", name:"Hindistancevizi Cooler", taste:"hafif, tropikal", mock:true, req:["coconutw","pine","lime"], lines:[["120 ml","coconutw"],["60 ml","pine"],["10 ml","lime"]], method:"Buzlu bardakta karıştır.", garnish:["Ananas","pine"], glass:"highball", color:"#f2ecd2", src:DOGA, pri:1},
+ {id:"colalime", name:"Kola & Misket", taste:"ferah, ekşimsi", mock:true, req:["cola","sour"], lines:[["150 ml","cola"],["15 ml","sour"]], method:"Buzlu bardakta karıştır.", garnish:["Misket limonu","lime"], glass:"highball", color:"#3b1a0c", fizzy:true, src:KL, pri:0}
+];
+
+// ---------- Türetilmiş tablolar ----------
+const NAME = {}, INLINE = {}, ROLE = {}, CATOF = {};
+function indexIng(){ ING.forEach(c=>c.items.forEach(([k,v,r,inl])=>{ NAME[k]=v; ROLE[k]=r; INLINE[k]=inl||v; CATOF[k]=c.cat; })); }
+indexIng();
+const ROLES = {S:"Ana içki",A:"Aperatif / vermut / amaro",L:"Likör",W:"Şarap / köpüklü / bira",M:"Gazlı karıştırıcı",J:"Meyve suyu / düz karıştırıcı",C:"Ekşi (narenciye)",Y:"Tatlandırıcı / şurup",D:"Süt / krema / yumurta",B:"Bitter",H:"Taze ot / meyve / baharat"};
+const ALC_ROLES = new Set(["S","A","L","W","R"]);
+const FIZZY = id => ROLE[id]==="M";
+const TOTAL_ING = ING.reduce((n,c)=>n+c.items.length,0);
+
+
+// ---------- Bardak çizimi ----------
+const GL = {
+  rocks:{o:"M44 112 L156 112 L151 226 Q150 234 142 234 L58 234 Q50 234 49 226 Z", c:"M50 116 L150 116 L146 224 L54 224 Z", top:122, bot:224, rim:[152,112], ice:true},
+  highball:{o:"M60 44 L140 44 L135 232 Q134 240 126 240 L74 240 Q66 240 65 232 Z", c:"M65 48 L135 48 L131 228 L69 228 Z", top:58, bot:228, rim:[137,44], ice:true},
+  coupe:{o:"M36 92 Q38 156 100 160 Q162 156 164 92 Z", c:"M41 96 Q44 151 100 155 Q156 151 159 96 Z", top:100, bot:155, rim:[160,92], stem:[160,226]},
+  martini:{o:"M30 78 L170 78 L100 164 Z", c:"M38 82 L162 82 L100 157 Z", top:90, bot:157, rim:[164,78], stem:[164,226]},
+  flute:{o:"M78 36 Q74 150 100 170 Q126 150 122 36 Z", c:"M82 40 Q79 146 100 165 Q121 146 118 40 Z", top:52, bot:165, rim:[121,36], stem:[170,228]},
+  wine:{o:"M56 50 Q48 168 100 176 Q152 168 144 50 Z", c:"M61 54 Q54 163 100 171 Q146 163 139 54 Z", top:92, bot:171, rim:[142,50], stem:[176,228], ice:true},
+  mug:{o:"M54 86 L146 86 L142 232 Q141 238 134 238 L66 238 Q59 238 58 232 Z", c:"M59 90 L141 90 L138 228 L62 228 Z", top:100, bot:228, rim:[144,86], handle:true},
+  copper:{o:"M54 86 L146 86 L142 232 Q141 238 134 238 L66 238 Q59 238 58 232 Z", c:"M59 90 L141 90 L138 228 L62 228 Z", top:100, bot:228, rim:[144,86], handle:true, copper:true, ice:true},
+  shot:{o:"M74 140 L126 140 L122 230 Q121 236 114 236 L86 236 Q79 236 78 230 Z", c:"M78 144 L122 144 L119 228 L81 228 Z", top:150, bot:228, rim:[124,140]}
+};
+const GLASSNAME = {rocks:"Rocks / old fashioned",highball:"Highball",coupe:"Coupe",martini:"Martini kadehi",flute:"Flüt",wine:"Şarap kadehi",mug:"Isıya dayanıklı kupa",copper:"Bakır kupa (yoksa highball)",shot:"Shot bardağı"};
+function shade(hex, f){ const n=parseInt(hex.slice(1),16); let r=n>>16,g=n>>8&255,b=n&255; const cl=v=>Math.max(0,Math.min(255,Math.round(v*f))); return "#"+((1<<24)+(cl(r)<<16)+(cl(g)<<8)+cl(b)).toString(16).slice(1); }
+function wheel(x,y,r,rind,flesh){ let s=`<circle cx="${x}" cy="${y}" r="${r}" fill="${rind}"/><circle cx="${x}" cy="${y}" r="${r-3}" fill="${flesh}"/>`; for(let i=0;i<8;i++){const a=i*Math.PI/4; s+=`<line x1="${x}" y1="${y}" x2="${(x+Math.cos(a)*(r-3)).toFixed(1)}" y2="${(y+Math.sin(a)*(r-3)).toFixed(1)}" stroke="${rind}" stroke-width="1.2" opacity=".7"/>`;} return s+`<circle cx="${x}" cy="${y}" r="2.5" fill="${rind}"/>`; }
+function garnishSVG(type, g, surf){
+  const [x,y]=g.rim;
+  switch(type){
+    case "lemon": return wheel(x,y,18,"#e9c42b","#fbe98a");
+    case "lime": return wheel(x,y,17,"#5d9a2c","#bfe07a");
+    case "orange": return wheel(x,y,19,"#e57a14","#f9b356");
+    case "cucumber": return wheel(x,y,16,"#3f7a35","#d8efc0");
+    case "peel": return `<path d="M${x-30} ${surf-2} q10 -14 20 0 t20 0 t18 -6" fill="none" stroke="#e8861c" stroke-width="5" stroke-linecap="round"/>`;
+    case "mint": return `<g transform="translate(100 ${Math.min(surf,g.top+6)-10})"><ellipse cx="-10" cy="-6" rx="7" ry="14" fill="#3d9a4f" transform="rotate(-30 -10 -6)"/><ellipse cx="6" cy="-10" rx="7" ry="15" fill="#4fb262" transform="rotate(15 6 -10)"/><ellipse cx="16" cy="0" rx="6" ry="12" fill="#2f8442" transform="rotate(55 16 0)"/><line x1="0" y1="2" x2="0" y2="22" stroke="#2c6b38" stroke-width="2"/></g>`;
+    case "cherry": return `<line x1="${x-30}" y1="${y-28}" x2="${x-62}" y2="${surf+6}" stroke="#d8a95b" stroke-width="2"/><circle cx="${x-50}" cy="${surf-6}" r="8" fill="#b3122a"/><circle cx="${x-52}" cy="${surf-9}" r="2.4" fill="#ff8a96"/>`;
+    case "olive": return `<line x1="${x-28}" y1="${y-30}" x2="${x-66}" y2="${surf+14}" stroke="#d8a95b" stroke-width="2"/><ellipse cx="${x-54}" cy="${surf+2}" rx="9" ry="7" fill="#7a8f2a"/><circle cx="${x-49}" cy="${surf+1}" r="2.6" fill="#c8402a"/>`;
+    case "berry": return `<g transform="translate(${x-6} ${y-4})"><path d="M0 -10 C10 -12 14 0 0 14 C-14 0 -10 -12 0 -10 Z" fill="#d42a3a"/><path d="M-6 -11 L0 -16 L6 -11" fill="#3d9a4f"/><circle cx="-3" cy="-2" r="1" fill="#ffd"/><circle cx="3" cy="3" r="1" fill="#ffd"/></g>`;
+    case "pine": return `<path d="M${x-4} ${y+14} L${x+22} ${y+14} L${x+9} ${y-12} Z" fill="#f2c43a" stroke="#c99a1a" stroke-width="2"/><path d="M${x+9} ${y-12} l-6 -14 M${x+9} ${y-12} l6 -14 M${x+9} ${y-12} l0 -16" stroke="#3d8a3f" stroke-width="3" stroke-linecap="round"/>`;
+    case "beans": return [-14,0,14].map(d=>`<ellipse cx="${100+d}" cy="${surf+2}" rx="5" ry="3.4" fill="#4a2a14"/><line x1="${100+d-4}" y1="${surf+2}" x2="${100+d+4}" y2="${surf+2}" stroke="#2a160a" stroke-width="1"/>`).join("");
+    default: return "";
+  }
+}
+let uidN=0;
+function glassSVG(r, fill, opts={}){
+  const g = GL[r.glass]||GL.rocks, id="g"+(uidN++);
+  const surf = g.bot-(g.bot-g.top)*fill;
+  const c1 = r.color, c2 = shade(r.color,.72);
+  const liquid = fill>0 ? `<rect x="-100" y="${surf.toFixed(1)}" width="400" height="${(g.bot-surf+220).toFixed(1)}" fill="url(#${id}l)"/>` : "";
+  let topLayer = "";
+  if(r.top && fill>0.15 && (!r.top.need || has(r.top.need))){ const h=r.top.h*Math.min(1,fill*1.3); topLayer=`<rect x="-100" y="${surf.toFixed(1)}" width="400" height="${h.toFixed(1)}" fill="${r.top.c}" opacity=".95"/>`; }
+  let ice = "";
+  if(g.ice && fill>0.3 && r.glass!=="wine"){ const cy=Math.max(surf+4,g.top+4); ice=[[78,cy,-12],[104,cy+16,8],[86,cy+40,20]].filter(p=>p[1]<g.bot-20).map(([x,y,a])=>`<rect x="${x}" y="${y}" width="26" height="24" rx="5" fill="#ffffff" opacity=".22" stroke="#ffffff" stroke-opacity=".45" transform="rotate(${a} ${x+13} ${y+12})"/>`).join(""); }
+  if(r.glass==="wine" && fill>0.3){ const cy=surf+6; ice=`<rect x="84" y="${cy}" width="24" height="22" rx="5" fill="#fff" opacity=".22" stroke="#fff" stroke-opacity=".45" transform="rotate(-10 96 ${cy+11})"/>`; }
+  let bubbles = "";
+  if(r.fizzy && fill>0.2 && !opts.still){ for(let i=0;i<7;i++){ const x=78+((i*29)%46), y=g.bot-6-(i*7%20); bubbles+=`<circle class="bub" cx="${x}" cy="${y}" r="${1.6+(i%3)*.7}" fill="#fff" opacity=".7" style="animation-delay:${(i*0.37).toFixed(2)}s"/>`; } }
+  const surfLine = fill>0 ? `<rect x="-100" y="${surf.toFixed(1)}" width="400" height="2" fill="#fff" opacity=".25"/>` : "";
+  const stem = g.stem ? `<rect x="97" y="${g.stem[0]}" width="6" height="${g.stem[1]-g.stem[0]}" fill="#ffffff" opacity=".35"/><ellipse cx="100" cy="${g.stem[1]+4}" rx="38" ry="6" fill="#ffffff" opacity=".18" stroke="#ffffff" stroke-opacity=".5" stroke-width="2"/>` : "";
+  const handle = g.handle ? `<path d="M146 112 Q178 116 176 150 Q174 186 143 190" fill="none" stroke="${g.copper?"#b8673a":"#ffffff"}" stroke-opacity="${g.copper?1:.5}" stroke-width="${g.copper?9:6}" stroke-linecap="round"/>` : "";
+  const hx = r.glass==="martini" ? 62 : parseFloat(g.c.slice(1))+7;
+  const body = g.copper
+    ? `<path d="${g.o}" fill="url(#${id}cu)" mask="url(#${id}m)"/>`
+    : `<path d="${g.o}" fill="#ffffff" fill-opacity=".06" stroke="#ffffff" stroke-opacity=".6" stroke-width="2.5" stroke-linejoin="round"/><path d="M${hx} ${g.top} l-2 ${Math.max(20,(g.bot-g.top)*.55)}" stroke="#fff" stroke-opacity=".35" stroke-width="4" stroke-linecap="round"/>`;
+  const defs = `<defs><linearGradient id="${id}l" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${c1}"/><stop offset="1" stop-color="${c2}"/></linearGradient><clipPath id="${id}c"><path d="${g.c}"/></clipPath>${g.copper?`<linearGradient id="${id}cu" x1="0" x2="1"><stop offset="0" stop-color="#8a4a26"/><stop offset=".35" stop-color="#e09a62"/><stop offset=".6" stop-color="#b8673a"/><stop offset="1" stop-color="#7a3e1e"/></linearGradient><mask id="${id}m"><rect width="200" height="260" fill="#fff"/><rect x="0" y="0" width="200" height="${g.top+2}" fill="#000"/></mask>`:""}</defs>`;
+  const gar = fill>0.85 && r.garnish ? garnishSVG(r.garnish[1], g, surf) : "";
+  return `<svg viewBox="0 0 200 260" role="img" aria-label="${esc(r.name)} bardağı">${defs}<g clip-path="url(#${id}c)"><g class="liq" data-cy="${surf.toFixed(1)}">${liquid}${topLayer}${surfLine}</g>${ice}${bubbles}</g>${stem}${handle}${body}${gar}</svg>`;
+}
+
+
+function srcHTML(s){
+  if(s.t==="iba") return `<span class="badge iba">IBA klasiği</span>`;
+  if(s.t==="diff") return `<span class="badge iba">Difford's Guide</span>`;
+  if(s.t==="uyarlama") return `<span class="badge uyar">Uyarlama</span>`;
+  if(s.t==="doga") return `<span class="badge doga">Ev yapımı doğaçlama</span>`;
+  return `<span class="badge">${esc(s.label||"Klasik")}</span>`;
+}
+function srcLine(s){
+  if(s.t==="iba") return `Kaynak: <a href="${s.url}" target="_blank" rel="noopener">IBA resmî tarifi</a>`;
+  if(s.t==="diff") return `Kaynak: <a href="${s.url}" target="_blank" rel="noopener">Difford's Guide</a>${s.label?" ("+esc(s.label)+")":""}`;
+  if(s.t==="uyarlama") return `Kaynak: orijinali <a href="${s.url}" target="_blank" rel="noopener">${esc(s.orig)}</a>, uyarlama doctaile'ın`;
+  if(s.t==="doga") return `Kaynak: yok. Bar şablonlarından doctaile'ın doğaçlaması.`;
+  return `Kaynak: ${esc(s.label||"klasik bar tarifi, yaygın versiyon")}`;
+}
+
+</script>
+<script>
+(function(){
+const $ = id => document.getElementById(id);
+const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+const esc = s => String(s).replace(/[&<>"']/g, ch=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[ch]));
+window.esc = esc;
+const sel = new Set(["scotch","rosso","jager","cola","soda","coffee","lemon","sugar"]);
+const has = k => GROUPS[k] ? GROUPS[k].m.some(x=>sel.has(x)) : sel.has(k);
+const pick = k => GROUPS[k] ? (GROUPS[k].m.find(x=>sel.has(x)) || GROUPS[k].m[0]) : k;
+const lineName = k => INLINE[pick(k)] || k;
+const reqLabel = k => GROUPS[k] ? GROUPS[k].l : (INLINE[k]||k);
+window.has = has;   // bardak çizimi üst katman (krema, köpük) için kullanır
+let toastT; const say = t => { $("toast").textContent = t; $("toast").classList.add("show"); clearTimeout(toastT); toastT = setTimeout(()=>$("toast").classList.remove("show"), 2300); };
+
+/* ---------- Ölçü kabı: sayfa = 90 ml ---------- */
+(function(){
+  let t = ""; for(let ml=0; ml<=90; ml+=15){ const y = 250 - ml/90*244; t += `<line x1="${ml%30?40:34}" y1="${y}" x2="46" y2="${y}"/><text x="2" y="${y+3}" fill="#96a0ab" stroke="none" font-size="7" font-family="DM Mono, monospace">${ml}</text>`; }
+  $("jigticks").innerHTML = t;
+  const lvl = $("jiglevel"), ml = $("jigml"), bar = $("bar");
+  function upd(){
+    const max = document.documentElement.scrollHeight - innerHeight;
+    const f = max>0 ? Math.min(1, scrollY/max) : 0, h = f*244;
+    lvl.setAttribute("y", 250-h); lvl.setAttribute("height", h);
+    ml.textContent = Math.round(f*90)+" ml"; bar.style.width = (f*100)+"%";
+  }
+  addEventListener("scroll", upd, {passive:true}); addEventListener("resize", upd); upd();
+})();
+
+/* ---------- Hero bardağı: dolar, fareyi izler, sallanınca yeni kokteyl ---------- */
+const HERO_POOL = R.filter(r=>!r.mock && (r.pri||0)>=2 && !["mug","shot"].includes(r.glass));
+let heroR = R.find(r=>r.id==="highlandburns"), heroFill = 0, tilt = 0, cur = 0, vel = 0;
+function drawHero(){
+  $("heroGlass").innerHTML = glassSVG(heroR, heroFill);
+  $("heroPct").textContent = Math.round(heroFill/0.92*90)+" ml";
+}
+function pourHero(r){
+  heroR = r; $("heroName").textContent = r.name; $("heroTaste").textContent = r.taste;
+  if(reduce){ heroFill = .92; drawHero(); return; }
+  const t0 = performance.now(), dur = 1500;
+  (function step(now){ const p = Math.min(1,(now-t0)/dur); heroFill = .92*(1-Math.pow(1-p,3)); drawHero(); if(p<1) requestAnimationFrame(step); })(t0);
+}
+pourHero(heroR);
+// Fare eğimi: bardak eğilir, sıvı düz kalır
+const hg = $("heroGlass");
+addEventListener("mousemove", e=>{ tilt = (e.clientX/innerWidth - .5) * 22; }, {passive:true});
+(function loop(){
+  if(!reduce){
+    vel += (tilt - cur)*0.07; vel *= 0.8; cur += vel;
+    hg.style.transform = `rotate(${cur.toFixed(2)}deg)`;
+    const liq = hg.querySelector(".liq"); if(liq) liq.setAttribute("transform", `rotate(${(-cur).toFixed(2)} 100 ${liq.dataset.cy})`);
+  }
+  requestAnimationFrame(loop);
+})();
+// Salla: fare ile hızlı yön değiştirme ya da telefonun ivmeölçeri
+let lastX = null, lastDir = 0, flips = [], lastShake = 0;
+function shaken(){
+  const now = Date.now(); if(now - lastShake < 2200) return; lastShake = now; flips = [];
+  let r; do { r = HERO_POOL[Math.floor(Math.random()*HERO_POOL.length)]; } while(r.id===heroR.id);
+  hg.classList.add("shaking"); setTimeout(()=>hg.classList.remove("shaking"), 700);
+  try{ navigator.vibrate && navigator.vibrate([30,60,30,60,30]); }catch(e){}
+  say("Sallandı! Bardakta: "+r.name);
+  heroFill = 0; setTimeout(()=>pourHero(r), 450);
+}
+hg.parentElement.addEventListener("mousemove", e=>{
+  if(lastX!==null){ const dx = e.clientX-lastX, dir = Math.sign(dx);
+    if(Math.abs(dx) > 14 && dir && dir !== lastDir){ const now=Date.now(); flips = flips.filter(t=>now-t<700); flips.push(now); lastDir = dir; if(flips.length>=5) shaken(); } }
+  lastX = e.clientX;
+});
+let peaks = [];
+addEventListener("devicemotion", e=>{
+  const a = e.acceleration; if(!a || a.x==null) return;
+  if(Math.hypot(a.x,a.y,a.z) < 15) return;
+  const now = Date.now(); peaks = peaks.filter(t=>now-t<900); peaks.push(now);
+  if(peaks.length>=3){ peaks=[]; shaken(); }
+});
+if(matchMedia("(hover: none)").matches) $("shakeHint").innerHTML = "Telefonunu <b>shaker gibi salla</b>: yeni bir kokteyl karışsın.";
+hg.addEventListener("click", ()=>{ if(matchMedia("(hover: none)").matches && typeof DeviceMotionEvent!=="undefined" && DeviceMotionEvent.requestPermission){ DeviceMotionEvent.requestPermission().catch(()=>{}); } });
+
+/* ---------- Canlı deneme: uygulamanın tarif motoru ---------- */
+const POPULAR = ["scotch","bourbon","vodka","gin","wrum","drum","tequila","raki","cognac","jager","rosso","bianco","dry","campari","aperol","triple","kahlua","amaretto","baileys","prosecco","redwine","beer","cola","soda","tonic","ginger","sprite","oj","pine","cran","coffee","lemon","lime","mint","sugar","honey","egg","bitters"];
+const norm = s => s.toLocaleLowerCase("tr").normalize("NFD").replace(/[̀-ͯ]/g,"").replace(/ı/g,"i");
+const short = k => NAME[k].split(" (")[0];
+function renderChips(){
+  const ids = POPULAR.concat([...sel].filter(k=>!POPULAR.includes(k)));
+  $("chips").innerHTML = ids.map(k=>`<button type="button" class="chip" data-k="${k}" aria-pressed="${sel.has(k)}">${esc(short(k))}</button>`).join("");
+  $("cnt").textContent = sel.size;
+}
+function renderFound(){
+  const q = norm($("q").value.trim());
+  if(!q){ $("found").innerHTML = ""; return; }
+  const hits = Object.keys(NAME).filter(k=>norm(NAME[k]).includes(q)).slice(0,14);
+  $("found").innerHTML = `<span class="lbl">${hits.length? "Bulunanlar · dokun, ekle":"“"+esc($("q").value)+"” listede yok; uygulamada kendi malzemen olarak ekleyebilirsin"}</span>` + hits.map(k=>`<button type="button" class="chip" data-k="${k}" aria-pressed="${sel.has(k)}">${esc(NAME[k])}</button>`).join("");
+}
+document.querySelector(".demo").addEventListener("click", e=>{
+  const b = e.target.closest("[data-k]"); if(!b) return;
+  const k = b.dataset.k; sel.has(k) ? sel.delete(k) : sel.add(k);
+  renderChips(); renderFound();
+});
+$("q").addEventListener("input", renderFound);
+$("clear").addEventListener("click", ()=>{ sel.clear(); renderChips(); renderFound(); });
+
+let ranked = [], ones = [], seen = {}, curKey = "";
+function rank(){
+  const mock = $("mock").checked, full = [], one = [];
+  R.forEach(r=>{
+    if(mock && !r.mock) return;
+    const miss = r.req.filter(k=>!has(k));
+    const used = new Set(r.req.filter(has).map(pick));
+    const sc = used.size*1.2 + (r.pri||0) + Math.random()*1.6;
+    if(!miss.length) full.push({r, sc}); else if(miss.length===1) one.push({r, sc, miss:miss[0]});
+  });
+  full.sort((a,b)=>b.sc-a.sc); one.sort((a,b)=>b.sc-a.sc);
+  ranked = full.map(o=>o.r); ones = one;
+  curKey = [...sel].sort().join(",") + (mock?"|0":"");
+}
+function nextFresh(){
+  const s = (seen[curKey] = (seen[curKey]||[]).filter(id=>ranked.some(r=>r.id===id)));
+  let r = ranked.find(x=>!s.includes(x.id)), restarted = false;
+  if(!r){ s.length = 0; r = ranked[0]; restarted = true; }
+  s.push(r.id);
+  return {r, n:s.length, total:ranked.length, restarted};
+}
+function srcBadge(s){ return srcHTML(s); }
+function showRecipe(o){
+  const r = o.r;
+  const lines = r.lines.map(([a,k])=>`<li><span class="amt">${esc(a)}</span><span>${esc(lineName(k))}</span></li>`).join("");
+  const optHave = (r.opt||[]).filter(([a,k])=>has(k)).map(([a,k])=>`<li class="opt"><span class="amt">${esc(a)}</span><span>${esc(lineName(k))} <em style="color:var(--muted)">(isteğe bağlı)</em></span></li>`).join("");
+  $("res").innerHTML = `
+    <div class="restop"><div class="glassbox">${glassSVG(r,.92)}</div>
+      <div><h3 class="rname">${esc(r.name)}</h3><p class="taste">${esc(r.taste)}</p>
+      <div class="badges">${srcBadge(r.src)}${r.mock?'<span class="badge">Alkolsüz</span>':""}${r.strong?'<span class="badge strong">Güçlü</span>':""}</div></div></div>
+    <p class="prog">Bu malzemelerle ${o.total} kokteyl yapılabiliyor · ${o.n}. öneri</p>
+    ${o.restarted?`<div class="note">Hepsini gördün; liste baştan başladı.</div>`:""}
+    <div class="blk"><p class="h4">Malzemeler</p><ul class="ings">${lines}${optHave}</ul></div>
+    <div class="blk"><p class="h4">Yapılışı</p><p class="method">${esc(r.method)}</p></div>
+    <div class="meta"><div><span>BARDAK</span>${GLASSNAME[r.glass]}</div><div><span>GARNİTÜR</span>${esc(r.garnish?r.garnish[0]:"—")}</div></div>
+    ${r.info?`<div class="note">${esc(r.info)}</div>`:""}
+    <p class="srcl">${srcLine(r.src)}</p>
+    <div class="resact">${o.total>1?'<button class="btn" type="button" id="next">Başka bir tane öner</button>':""}<span class="prog">Uygulamada: ♡ favori, salla-karıştır, profilin</span></div>`;
+  const n = $("next"); if(n) n.onclick = ()=>pour(nextFresh());
+}
+const STEPS = ["Buz ekleniyor…","Ölçüler jigger'a dökülüyor…","Karıştırılıyor…","Süzülüyor…","Garnitür yerleştiriliyor…"];
+function pour(o){
+  if(reduce){ showRecipe(o); return; }
+  $("res").innerHTML = `<div class="pouring"><div class="g" id="pg"></div><div class="p" id="pp">0%</div><div class="s" id="ps"></div></div>`;
+  const t0 = performance.now(), dur = 1800;
+  (function step(now){
+    const p = Math.min(1,(now-t0)/dur), e = 1-Math.pow(1-p,2);
+    const g = $("pg"); if(!g) return;
+    g.innerHTML = glassSVG(o.r, e*.92, {still:true}); $("pp").textContent = Math.round(p*100)+"%";
+    $("ps").textContent = STEPS[Math.min(STEPS.length-1, Math.floor(p*STEPS.length))];
+    if(p<1) requestAnimationFrame(step); else setTimeout(()=>showRecipe(o), 200);
+  })(t0);
+}
+function make(animate){
+  rank();
+  if(!ranked.length){
+    $("res").innerHTML = `<h3 class="rname">Bununla bir kokteyl çıkmıyor</h3><p class="taste">En az bir içki ya da karıştırıcı seç.</p>${ones.length?`<p class="h4" style="margin-top:18px">Bir malzeme eksik</p><div class="chips">${ones.slice(0,6).map(o=>`<span class="chip static">${esc(o.r.name)} · eksik: ${esc(reqLabel(o.miss))}</span>`).join("")}</div>`:""}`;
+    return;
+  }
+  const o = nextFresh(); animate ? pour(o) : showRecipe(o);
+}
+$("make").addEventListener("click", ()=>make(true));
+$("mock").addEventListener("change", ()=>make(true));
+renderChips(); make(false);
+
+/* ---------- Fold: kaydırdıkça açılan telefon ---------- */
+$("foldGlass").innerHTML = glassSVG(R.find(r=>r.id==="highlandburns"), .92, {still:true});
+$("coverGlass").innerHTML = glassSVG(R.find(r=>r.id==="negroni"), .92, {still:true});
+const devEl = $("dev"), devBox = $("device");
+function foldUpd(){
+  const b = devBox.getBoundingClientRect(), vh = innerHeight;
+  // bölüm ekranın altından girerken kapalı, ortaya gelince tamamen açık
+  let p = (vh*0.8 - b.top) / (vh*0.5); p = Math.max(0, Math.min(1, p));
+  if(reduce) p = 1;
+  const ang = 178 - 178*p;   // sayfa izleyiciye doğru katlanır
+  devEl.style.setProperty("--open", ang.toFixed(1)+"deg");
+  devEl.style.transform = `rotateX(${(8*(1-p)).toFixed(1)}deg) translateX(${(-25*(1-p)).toFixed(1)}%)`;
+  $("foldcap").textContent = p<0.98 ? `Kaydırdıkça açılır · ${Math.round(p*180)}°` : "Kitap modu · iç ekran 7,6″ · 4:3";
+}
+addEventListener("scroll", foldUpd, {passive:true}); addEventListener("resize", foldUpd); foldUpd();
+})();
+</script>
+</body>
+</html>
